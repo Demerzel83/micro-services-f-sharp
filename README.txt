@@ -1,0 +1,29 @@
+Containers:
+    - Identity:
+        - API
+        - SQL SERVER
+    - Catalog:
+        - API
+        - SQL SERVER
+    - Ordering:
+        - API
+        - Background Process
+        - SQL SERVER
+    - Basket:
+        - API
+        - Redis
+    - Marketing:
+        - API
+        - MongoDB/CosmosBD
+        - SQL SERVER
+    - Locations:
+        - API
+        - MongoDB/CosmosBD
+    - RabbitMQ
+    - Front-end Web Server
+    - API Gateways:
+        - Mobile-Shopping
+        - Mobile-Marketing
+        - Web-Shopping
+        - Web-Marketing
+Total: 20
