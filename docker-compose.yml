@@ -5,6 +5,13 @@ services:
         ports:
             - "5000:80"
             - "5001:80"
+    basket-service-db:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+            - "1434:1433"
+        environment:
+            SA_PASSWORD: "Welcome1234.?"
+            ACCEPT_EULA: "Y"
     catalog-service:
         build: ./catalog-service
         ports:

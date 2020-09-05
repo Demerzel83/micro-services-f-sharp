@@ -34,3 +34,4 @@ Ankh.NoLoad
 *.DotSettings.user
 deploy
 yarn-error.log
+.ionide/
