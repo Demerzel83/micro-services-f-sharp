@@ -2,6 +2,13 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
 
 open FSharp.Control.Tasks.V2
 open Giraffe
+open Microsoft.eShopOnContainers.Services.Catalog.API.ReadModel
+open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogItemAggregate
+open Microsoft.eShopOnContainers.Services.Catalog.API.Commands
+open Microsoft.eShopOnContainers.Services.Catalog.SqlServer.Commands
+open Types
+open System
+open Chessie.ErrorHandling
 
 module CatalogController =
     let getHandlers () =
@@ -10,10 +17,11 @@ module CatalogController =
             route "/items" >=>
               fun next context ->
                 task {
-                      let result = ["item1"; "item2"]
+                      let result = Reader.getCatalogItems() 
 
                       return! json result next context
                   }
+            
             routef "/items/%i" (fun id ->
               fun next context ->
                   task {
@@ -61,26 +69,137 @@ module CatalogController =
                     return! json result next context
                 }
           ]
-          PUT >=> route "/items" >=>
-            fun next context ->
-               task {
+          PUT >=> 
+            routef "/item/price/%s" (fun id ->
+                fun next context ->
+                    task {
+                        let! catalogItemPrice = context.BindModelAsync<Model.CatalogItemPrice>()
+                        let id = AggregateId (new Guid (id))
+                        let versionNumber = AggregateVersion.Irrelevant;
+                        let cmd = SetPrice catalogItemPrice.Price
+                        let envelope = createCommand id (versionNumber, None, None, None) cmd
 
-                    let result = 1
+                        let list = [(catalogItemQueueName,envelope)]
+                        let result = queueCommands (List.ofSeq list)
 
-                    return! context.WriteJsonAsync result
-                }
-          POST >=> route "/items" >=>
+                        return! 
+                            (match result with
+                            | Result.Ok _ -> Successful.OK catalogItemPrice
+                            | Result.Bad _ ->  RequestErrors.badRequest (text "error")) next context
+                        })
+            routef "/item/picture/%s" (fun id ->
+                fun next context ->
+                    task {
+                        let! catalogItemImage = context.BindModelAsync<Model.CatalogItemImage>()
+    
+                        let id = AggregateId (new Guid(id))
+                        let versionNumber = AggregateVersion.Irrelevant;
+                        let cmd = SetPicture (catalogItemImage.FileName, catalogItemImage.Uri)
+                        let envelope = createCommand id (versionNumber, None, None, None) cmd
+
+                        let list = [(catalogItemQueueName,envelope)]
+                        let result = queueCommands (List.ofSeq list)
+
+                        return! 
+                            (match result with
+                            | Result.Ok _ -> Successful.OK catalogItemImage
+                            | Result.Bad _ ->  RequestErrors.badRequest (text "error")) next context
+                        })
+            routef "/item/stock/%s" (fun id -> 
+                fun next context ->
+                    task {
+                        let! catalogItemStock = context.BindModelAsync<Model.CatalogItemStock>()
+    
+                        let id = AggregateId (new Guid(id))
+                        let versionNumber = AggregateVersion.Irrelevant;
+                        let cmd = SetStock catalogItemStock.Stock
+                        let envelope = createCommand id (versionNumber, None, None, None) cmd
+
+                        let list = [(catalogItemQueueName,envelope)]
+                        let result = queueCommands (List.ofSeq list)
+
+                        return! 
+                            (match result with
+                            | Result.Ok _ -> Successful.OK catalogItemStock
+                            | Result.Bad _ ->  RequestErrors.badRequest (text "error")) next context
+                        })
+            routef "/item/stockthreshold/%s" (fun id ->
+                fun next context ->
+                    task {
+                        let! catalogItemStockThreshold = context.BindModelAsync<Model.CatalogItemStockThreshold>()
+                        
+                        let id = AggregateId (new Guid(id))
+                        let versionNumber = AggregateVersion.Irrelevant;
+                        let cmd = UpdateStockThreshold (catalogItemStockThreshold.ReStock, catalogItemStockThreshold.MaxStock)
+                        let envelope = createCommand id (versionNumber, None, None, None) cmd
+
+                        let list = [(catalogItemQueueName,envelope)]
+                        let result = queueCommands (List.ofSeq list)
+
+                        return! 
+                            (match result with
+                            | Result.Ok _ -> Successful.OK catalogItemStockThreshold
+                            | Result.Bad _ ->  RequestErrors.badRequest (text "error")) next context
+                        })
+            routef "/item/reorder/%s" (fun id -> 
+                fun next context ->
+                    task {
+                        let! catalogItemReorder = context.BindModelAsync<Model.CatalogItemReorder>()
+                        
+                        let id = AggregateId (new Guid(id))
+                        let versionNumber = AggregateVersion.Irrelevant;
+                        let cmd = if catalogItemReorder.Reorder = true then OnReorder else NotOnReorder
+                        let envelope = createCommand id (versionNumber, None, None, None) cmd
+
+                        let list = [(catalogItemQueueName,envelope)]
+                        let result = queueCommands (List.ofSeq list)
+
+                        return! 
+                            (match result with
+                            | Result.Ok _ -> Successful.OK catalogItemReorder
+                            | Result.Bad _ ->  RequestErrors.badRequest (text "error")) next context
+                    })
+          DELETE >=> routef "/item/%s" (fun ids ->
             fun next context ->
                 task {
-                    let result = 1
+                    let id = AggregateId (new Guid(ids))
+                    let versionNumber = AggregateVersion.Irrelevant;
+                    let cmd =   
+                        (new Guid(ids))
+                        |> Delete
+                    let envelope = createCommand id (versionNumber, None, None, None) cmd
 
-                    return! context.WriteJsonAsync result
-                }
-          DELETE >=> routef "%i" (fun id ->
-            fun next context ->
-              task {
-                    let result = 1
+                    let list = [(catalogItemQueueName,envelope)]
+                    let result = queueCommands (List.ofSeq list)
 
-                    return! context.WriteJsonAsync result
+                    return! 
+                        (match result with
+                        | Result.Ok _ -> Successful.OK id
+                        | Result.Bad _ ->  RequestErrors.badRequest (text "error")) next context
                 })
+          POST >=> route "/item/new" >=>
+                fun next context ->
+                    task {
+                        let! catalogItemM = context.BindModelAsync<Model.CatalogItemModel>()
+                        
+                        let id = AggregateId (Guid.NewGuid())
+                        let versionNumber = Expected 0;
+                        let catalogItemCreation = {
+                             Name =  catalogItemM.Name
+                             Description = catalogItemM.Description
+                             CatalogTypeId = catalogItemM.Type
+                             CatalogBrandId = catalogItemM.Brand
+                        }
+                        let cmd = Create catalogItemCreation
+                        let envelope = createCommand id (versionNumber, None, None, None) cmd
+
+                        let list = [(catalogItemQueueName,envelope)]
+                        let result = queueCommands (List.ofSeq list)
+
+                        return! 
+                            (match result with
+                            | Result.Ok _ -> Successful.OK catalogItemM
+                            | Result.Bad _ ->  RequestErrors.badRequest (text "error")) next context
+                    }
+
         ]

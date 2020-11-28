@@ -9,25 +9,40 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Chessie" Version="0.6.0" />
+    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="FSharp.Data.SqlClient" Version="2.0.7" />
+    <PackageReference Include="FSharpPlus" Version="1.1.4" />
     <PackageReference Include="Giraffe" Version="4.1.*" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.14" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.14">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="Polly" Version="7.2.1" />
+    <PackageReference Include="SQLProvider" Version="1.1.93" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
     <PackageReference Include="TaskBuilder.fs" Version="2.1.*" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="App.config" />
+    <Compile Include="Types.fs" />
+    <Compile Include="Events.fs" />
+    <Compile Include="Commands.fs" />
+    <Content Include="Notes.txt" />
+    
+    <Compile Include="model\CatalogItemAggregate.fs" />
+    <Compile Include="Utils\OptionConverter.fs" />
+    <Compile Include="Utils\Dapper.fs" />
     <Compile Include="ViewModel\PaginatedItemsViewModel.fs" />
     <Compile Include="CatalogSettings.fs" />
-    <Compile Include="model/CatalogItem.fs" />
-    <Compile Include="controllers/CatalogController.fs" />
+    <Compile Include="infrastructure\SqlServer.fs" />
+    <Compile Include="infrastructure\CommandHandler.fs" />
+    <Compile Include="model\ReadModel.fs" />
+    <Compile Include="model\CatalogItemModel.fs" />
+    <Compile Include="controllers\CatalogController.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="dockerfile" />
+    <None Include="README.md" />
     <None Include="sql\create-database.sql" />
     <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="WebRoot\**\*">
@@ -36,8 +51,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="infrastructure\" />
     <Folder Include="IntegrationEvents\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="5.0.0" />
   </ItemGroup>
 
 
