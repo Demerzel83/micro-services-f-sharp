@@ -12,13 +12,15 @@ module Program =
     open Microsoft.Extensions.Logging
     open Microsoft.Extensions.DependencyInjection
     open Giraffe
-    open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogController
+    open Microsoft.eShopOnContainers.Services.Catalog.API
 
 
     let webApp =
         choose [
-            getHandlers();
-            setStatusCode 404 >=> text "Not Catalog Items API" ]
+            CatalogItemsController.getHandlers()
+            CatalogTypesController.getHandlers()
+            CatalogBrandsController.getHandlers()
+            setStatusCode 404 >=> text "Not Catalog API" ]
 
     // ---------------------------------
     // Error handler

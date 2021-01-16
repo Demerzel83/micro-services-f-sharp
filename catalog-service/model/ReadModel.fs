@@ -118,9 +118,119 @@ module private DataAccess =
             ok event
         with ex -> Bad [Error ex.Message :> IError ]
 
-    let loadCatalogItems () =
+    let loadCatalogItems () = 
         query {
             for p in ctx.Dbo.CatalogItem do
+                join ct in ctx.Dbo.CatalogType 
+                    on (p.CatalogTypeId = ct.Id)
+                join cb in ctx.Dbo.CatalogBrand
+                    on (p.CatalogBrandId = cb.Id)
+                select { Id = p.Id
+                         Name = p.Name
+                         Description = p.Description
+                         Price = p.Price
+                         PictureFileName = p.PictureFileName 
+                         PictureUri = p.PictureUri
+                         CatalogType = { Id = p.CatalogTypeId; Type = ct.Type }
+                         CatalogBrand = { Id = p.CatalogBrandId; Brand = cb.Brand  }
+                         AvailableStock  = p.AvailableStock
+                         ReStockThreshold  = p.RestockThreshold
+                         MaxStockThreshold = p.MaxStockThreshold
+                         OnReorder = p.OnReorder } 
+        }
+
+    let loadCatalogItemById id = 
+        query {
+            for p in ctx.Dbo.CatalogItem do
+                where (p.Id = id)
+                join ct in ctx.Dbo.CatalogType 
+                    on (p.CatalogTypeId = ct.Id)
+                join cb in ctx.Dbo.CatalogBrand
+                    on (p.CatalogBrandId = cb.Id)
+                select { Id = p.Id
+                         Name = p.Name
+                         Description = p.Description
+                         Price = p.Price
+                         PictureFileName = p.PictureFileName 
+                         PictureUri = p.PictureUri
+                         CatalogType = { Id = p.CatalogTypeId; Type = ct.Type }
+                         CatalogBrand = { Id = p.CatalogBrandId; Brand = cb.Brand  }
+                         AvailableStock  = p.AvailableStock
+                         ReStockThreshold  = p.RestockThreshold
+                         MaxStockThreshold = p.MaxStockThreshold
+                         OnReorder = p.OnReorder } 
+        }
+
+    let loadCatalogItemsByDescription description = 
+        query {
+            for p in ctx.Dbo.CatalogItem do
+                where (p.Description = description)
+                join ct in ctx.Dbo.CatalogType 
+                    on (p.CatalogTypeId = ct.Id)
+                join cb in ctx.Dbo.CatalogBrand
+                    on (p.CatalogBrandId = cb.Id)
+                select { Id = p.Id
+                         Name = p.Name
+                         Description = p.Description
+                         Price = p.Price
+                         PictureFileName = p.PictureFileName 
+                         PictureUri = p.PictureUri
+                         CatalogType = { Id = p.CatalogTypeId; Type = ct.Type }
+                         CatalogBrand = { Id = p.CatalogBrandId; Brand = cb.Brand  }
+                         AvailableStock  = p.AvailableStock
+                         ReStockThreshold  = p.RestockThreshold
+                         MaxStockThreshold = p.MaxStockThreshold
+                         OnReorder = p.OnReorder } 
+        }
+
+    let loadCatalogItemsByTypeAndBrand typeId brandId = 
+        query {
+            for p in ctx.Dbo.CatalogItem do
+                where (p.CatalogBrandId = brandId && p.CatalogTypeId = typeId)
+                join ct in ctx.Dbo.CatalogType 
+                    on (p.CatalogTypeId = ct.Id)
+                join cb in ctx.Dbo.CatalogBrand
+                    on (p.CatalogBrandId = cb.Id)
+                select { Id = p.Id
+                         Name = p.Name
+                         Description = p.Description
+                         Price = p.Price
+                         PictureFileName = p.PictureFileName 
+                         PictureUri = p.PictureUri
+                         CatalogType = { Id = p.CatalogTypeId; Type = ct.Type }
+                         CatalogBrand = { Id = p.CatalogBrandId; Brand = cb.Brand  }
+                         AvailableStock  = p.AvailableStock
+                         ReStockThreshold  = p.RestockThreshold
+                         MaxStockThreshold = p.MaxStockThreshold
+                         OnReorder = p.OnReorder } 
+        }
+
+    let loadCatalogItemsByType typeId = 
+        query {
+            for p in ctx.Dbo.CatalogItem do
+                where (p.CatalogTypeId = typeId)
+                join ct in ctx.Dbo.CatalogType 
+                    on (p.CatalogTypeId = ct.Id)
+                join cb in ctx.Dbo.CatalogBrand
+                    on (p.CatalogBrandId = cb.Id)
+                select { Id = p.Id
+                         Name = p.Name
+                         Description = p.Description
+                         Price = p.Price
+                         PictureFileName = p.PictureFileName 
+                         PictureUri = p.PictureUri
+                         CatalogType = { Id = p.CatalogTypeId; Type = ct.Type }
+                         CatalogBrand = { Id = p.CatalogBrandId; Brand = cb.Brand  }
+                         AvailableStock  = p.AvailableStock
+                         ReStockThreshold  = p.RestockThreshold
+                         MaxStockThreshold = p.MaxStockThreshold
+                         OnReorder = p.OnReorder } 
+        }
+
+    let loadCatalogItemsByBrand brandId = 
+        query {
+            for p in ctx.Dbo.CatalogItem do
+                where (p.CatalogBrandId = brandId)
                 join ct in ctx.Dbo.CatalogType 
                     on (p.CatalogTypeId = ct.Id)
                 join cb in ctx.Dbo.CatalogBrand
@@ -159,3 +269,31 @@ module Writer =
 
 module Reader =
     let getCatalogItems() = DataAccess.loadCatalogItems() |> Seq.toList
+
+    let listResultToOption (result:Linq.IQueryable<CatalogItem>) =
+        match result |> Seq.toList with
+        | [] -> Option.None
+        | xs -> xs |> Option.Some 
+
+    let getCatalogItemById id = 
+        let result = DataAccess.loadCatalogItemById id |> Seq.toList 
+        match result with
+        | [] -> Option.None
+        | xs -> 
+            xs
+            |> Seq.head
+            |> Option.Some 
+
+    let getCatalogItemsByDescription = 
+        DataAccess.loadCatalogItemsByDescription >> listResultToOption
+
+    let getCatalogItemsByTypeAndBrand typeId brandId =
+        DataAccess.loadCatalogItemsByTypeAndBrand typeId brandId 
+        |> listResultToOption
+        
+    let getCatalogItemsByType =
+        DataAccess.loadCatalogItemsByType >> listResultToOption
+        
+    let getCatalogItemsByBrand =
+        DataAccess.loadCatalogItemsByBrand >> listResultToOption
+        

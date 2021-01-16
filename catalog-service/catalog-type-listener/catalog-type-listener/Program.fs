@@ -2,14 +2,14 @@
 
 open System
 open Chessie.ErrorHandling
-open Microsoft.eShopOnContainers.Services.Catalog.CommandHandler
+open Microsoft.eShopOnContainers.Services.Catalog.CatalogTypeCommandHandler
 open Microsoft.eShopOnContainers.Services.Catalog.API
 
 [<EntryPoint>]
 let main argv =
-    printfn "[INFO] Catalog Item Listener started"
+    printfn "[INFO] Catalog Type Listener started"
     let rec loop() =
-        let eventList = CatalogItemCommandHanlder.processCommandQueue()
+        let eventList = CatalogTypeCommandHanlder.processCommandQueue()
         
         let res =
             match eventList with
