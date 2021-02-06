@@ -10,8 +10,12 @@ open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogBrandModel
 open Types
 open System
 open Chessie.ErrorHandling
+open Microsoft.AspNetCore.Authentication.JwtBearer
 
 module CatalogBrandsController =
+    let authorize =
+        requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
+
     let processReadRequest result next context =
         task {
             return! 
@@ -23,22 +27,22 @@ module CatalogBrandsController =
     let getHandlers () =
         choose [
           GET >=> choose [
-            route "/brands" >=>
-              fun next context ->
+            route "/brands"  >=> authorize >=>
+              authorize >=> fun next context ->
                 task {
                       let result = Reader.getCatalogbrands() 
                       return! json result next context
                   }
             
             routef "/brands/%s" (fun id ->
-              fun next context ->
+              authorize >=> fun next context ->
                   task {
                       let result = Reader.getCatalogbrandById (Guid.Parse id)
                       return! processReadRequest result next context
                   }
             )
             routef "/brands/%s" (fun name ->
-              fun next context ->
+              authorize >=> fun next context ->
                   task {
                       let result = Reader.getCatalogbrandByName name
                       return! processReadRequest result next context
@@ -47,7 +51,7 @@ module CatalogBrandsController =
           ]
           PUT >=> 
             routef "/brands/%s" (fun id ->
-                fun next context ->
+                authorize >=> fun next context ->
                     task {
                         let! catalogBrand = context.BindModelAsync<Model.CatalogBrandModel>()
                         let id = AggregateId (new Guid (id))
@@ -64,7 +68,7 @@ module CatalogBrandsController =
                             | Result.Bad _ ->  RequestErrors.badRequest (text "error")) next context
                         })
           DELETE >=> routef "/brands/%s" (fun ids ->
-            fun next context ->
+            authorize >=> fun next context ->
                 task {
                     let id = AggregateId (new Guid(ids))
                     let versionNumber = AggregateVersion.Irrelevant;
@@ -81,7 +85,7 @@ module CatalogBrandsController =
                         | Result.Ok _ -> Successful.OK id
                         | Result.Bad _ ->  RequestErrors.badRequest (text "error")) next context
                 })
-          POST >=> route "/brands/new" >=>
+          POST >=> route "/brands/new" >=> authorize >=>
                 fun next context ->
                     task {
                         let! catalogBrandM = context.BindModelAsync<Model.CatalogBrandModel>()

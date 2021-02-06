@@ -10,13 +10,17 @@ open Types
 open System
 open Chessie.ErrorHandling
 open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogTypeModel
+open Microsoft.AspNetCore.Authentication.JwtBearer
 
 module CatalogTypesController =
+    let authorize =
+        requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
+
     let getHandlers () =
         choose [
           GET >=> choose [
-            route "/types" >=>
-              fun next context ->
+            route "/types" >=> authorize  >=>
+              authorize >=> fun next context ->
                 task {
                       let result = Reader.getCatalogTypes() 
 
@@ -24,7 +28,7 @@ module CatalogTypesController =
                   }
             
             routef "/types/%s" (fun id ->
-              fun next context ->
+              authorize >=> fun next context ->
                   task {
                       let result = ["item1"]
 
@@ -32,7 +36,7 @@ module CatalogTypesController =
                   }
             )
             routef "/types/%s" (fun name ->
-              fun next context ->
+              authorize >=> fun next context ->
                   task {
                       let result = [name]
 
@@ -42,7 +46,7 @@ module CatalogTypesController =
           ]
           PUT >=> 
             routef "/types/%s" (fun id ->
-                fun next context ->
+                authorize >=> fun next context ->
                     task {
                         let! catalogType = context.BindModelAsync<Model.CatalogTypeModel>()
                         let id = AggregateId (new Guid (id))
@@ -59,7 +63,7 @@ module CatalogTypesController =
                             | Result.Bad _ ->  RequestErrors.badRequest (text "error")) next context
                         })
           DELETE >=> routef "/types/%s" (fun ids ->
-            fun next context ->
+            authorize >=> fun next context ->
                 task {
                     let id = AggregateId (new Guid(ids))
                     let versionNumber = AggregateVersion.Irrelevant;
@@ -76,7 +80,7 @@ module CatalogTypesController =
                         | Result.Ok _ -> Successful.OK id
                         | Result.Bad _ ->  RequestErrors.badRequest (text "error")) next context
                 })
-          POST >=> route "/types/new" >=>
+          POST >=> route "/types/new" >=> authorize  >=>
                 fun next context ->
                     task {
                         let! catalogItemM = context.BindModelAsync<Model.CatalogTypeModel>()

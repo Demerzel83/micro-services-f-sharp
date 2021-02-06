@@ -1,5 +1,9 @@
 namespace Microsoft.eShopOnContainers.Services.Catalog
 
+open Microsoft.AspNetCore.Authentication.JwtBearer
+open Microsoft.IdentityModel.Tokens
+open System.Text
+
 
 module Program =
 
@@ -20,6 +24,7 @@ module Program =
             CatalogItemsController.getHandlers()
             CatalogTypesController.getHandlers()
             CatalogBrandsController.getHandlers()
+            LoginController.getHandlers()
             setStatusCode 404 >=> text "Not Catalog API" ]
 
     // ---------------------------------
@@ -46,14 +51,29 @@ module Program =
         (match env.EnvironmentName with
         | "Development"  -> app.UseDeveloperExceptionPage()
         | _ -> app.UseGiraffeErrorHandler errorHandler)
+            .UseAuthentication()
             .UseHttpsRedirection()
             .UseCors(configureCors)
             .UseStaticFiles()
             .UseGiraffe(webApp)
-
+    
+    let secret = "spadR2dre#u-ruBrE@TepA&*Uf@U"
     let configureServices (services : IServiceCollection) =
         services.AddCors()    |> ignore
         services.AddGiraffe() |> ignore
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(fun options -> 
+                options.TokenValidationParameters <- TokenValidationParameters(
+                    ValidateActor = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = "jwtwebapp.net",
+                    ValidAudience = "jwtwebapp.net",
+                    IssuerSigningKey = SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)))
+                ) |> ignore
+
 
     let configureLogging (builder : ILoggingBuilder) =
         builder.AddFilter(fun l -> l.Equals LogLevel.Error)

@@ -14,6 +14,7 @@
     <PackageReference Include="FSharp.Data.SqlClient" Version="2.0.7" />
     <PackageReference Include="FSharpPlus" Version="1.1.4" />
     <PackageReference Include="Giraffe" Version="4.1.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.11" />
     <PackageReference Include="Polly" Version="7.2.1" />
     <PackageReference Include="SQLProvider" Version="1.1.93" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
@@ -26,6 +27,7 @@
     <Compile Include="Events.fs" />
     <Compile Include="Commands.fs" />
     <Content Include="Notes.txt" />
+    <Compile Include="model\Login.fs" />
     <Compile Include="model\CatalogBrandAggregate.fs" />
     <Compile Include="model\CatalogTypeAggregate.fs" />
     <Compile Include="model\CatalogItemAggregate.fs" />
@@ -43,6 +45,7 @@
     <Compile Include="model\CatalogBrandModel.fs" />
     <Compile Include="model\CatalogTypeReadModel.fs" />
     <Compile Include="model\CatalogBrandReadModel.fs" />
+    <Compile Include="controllers\LoginController.fs" />
     <Compile Include="controllers\CatalogBrandsController.fs" />
     <Compile Include="controllers\CatalogTypesController.fs" />
     <Compile Include="controllers\CatalogItemsController.fs" />

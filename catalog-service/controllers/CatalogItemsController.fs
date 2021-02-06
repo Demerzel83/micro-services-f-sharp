@@ -9,6 +9,7 @@ open Microsoft.eShopOnContainers.Services.Catalog.SqlServer.Commands
 open Types
 open System
 open Chessie.ErrorHandling
+open Microsoft.AspNetCore.Authentication.JwtBearer
 
 module CatalogItemsController =
     let processRequest (id:string) (cmd:Command) (versionNumber:AggregateVersion) (model:'T) next context =
@@ -31,11 +32,13 @@ module CatalogItemsController =
               | None -> RequestErrors.NOT_FOUND (text "Contact Type not found") next context
               | Some xs -> Successful.OK xs next context
         }
+    let authorize =
+        requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
 
     let getHandlers () =
         choose [
           GET >=> choose [
-            route "/items" >=>
+            route "/items" >=> authorize >=>
               fun next context ->
                 task {
                       let result = Reader.getCatalogItems() 
@@ -44,15 +47,14 @@ module CatalogItemsController =
                   }
             
             routef "/items/%s" (fun id ->
-              fun next context ->
-                  task {
-                      
-                      let result = Reader.getCatalogItemById (Guid.Parse id) 
-                      return! processReadRequest result next context
-                  }
+                authorize >=> fun next context ->
+                          task {
+                              let result = Reader.getCatalogItemById (Guid.Parse id) 
+                              return! processReadRequest result next context
+                          }
             )
             routef "/items/withdescription/%s" (fun description ->
-              fun next context ->
+              authorize >=> fun next context ->
                   task {
                       let result = Reader.getCatalogItemsByDescription description
 
@@ -60,7 +62,7 @@ module CatalogItemsController =
                   }
             )
             routef "/items/type/%s/brand/%s" (fun (catalogTypeId, catalogBrandId) ->
-              fun next context ->
+              authorize >=> fun next context ->
                   task {
                       let result = Reader.getCatalogItemsByTypeAndBrand (Guid.Parse catalogTypeId) (Guid.Parse catalogBrandId) 
 
@@ -68,7 +70,7 @@ module CatalogItemsController =
                   }
             )
             routef "/items/type/all/brand/%s" (fun catalogBrandId ->
-              fun next context ->
+              authorize >=> fun next context ->
                   task {
                       let result = Reader.getCatalogItemsByBrand (Guid.Parse catalogBrandId) 
 
@@ -76,7 +78,7 @@ module CatalogItemsController =
                   }
             )
             routef "/items/brand/all/type/%s" (fun typeId -> 
-                fun next context ->
+                authorize >=> fun next context ->
                     task {
                         let result = Reader.getCatalogItemsByType (Guid.Parse typeId) 
                         
@@ -86,42 +88,42 @@ module CatalogItemsController =
           ]
           PUT >=> 
             routef "/item/price/%s" (fun id ->
-                fun next context ->
+                authorize >=> fun next context ->
                     task {
                         let! catalogItemPrice = context.BindModelAsync<Model.CatalogItemPrice>()
                         let cmd = SetPrice catalogItemPrice.Price
                         return! processRequest id cmd AggregateVersion.Irrelevant catalogItemPrice next context 
                         })
             routef "/item/picture/%s" (fun id ->
-                fun next context ->
+                authorize >=> fun next context ->
                     task {
                         let! catalogItemImage = context.BindModelAsync<Model.CatalogItemImage>()
                         let cmd = SetPicture (catalogItemImage.FileName, catalogItemImage.Uri)
                         return! processRequest id cmd AggregateVersion.Irrelevant catalogItemImage next context 
                         })
             routef "/item/stock/%s" (fun id -> 
-                fun next context ->
+                authorize >=> fun next context ->
                     task {
                         let! catalogItemStock = context.BindModelAsync<Model.CatalogItemStock>()
                         let cmd = SetStock catalogItemStock.Stock
                         return! processRequest id cmd AggregateVersion.Irrelevant catalogItemStock next context
                         })
             routef "/item/stockthreshold/%s" (fun id ->
-                fun next context ->
+                authorize >=> fun next context ->
                     task {
                         let! catalogItemStockThreshold = context.BindModelAsync<Model.CatalogItemStockThreshold>()
                         let cmd = UpdateStockThreshold (catalogItemStockThreshold.ReStock, catalogItemStockThreshold.MaxStock)
                         return! processRequest id cmd AggregateVersion.Irrelevant catalogItemStockThreshold next context
                         })
             routef "/item/reorder/%s" (fun id -> 
-                fun next context ->
+                authorize >=> fun next context ->
                     task {
                         let! catalogItemReorder = context.BindModelAsync<Model.CatalogItemReorder>()
                         let cmd = if catalogItemReorder.Reorder = true then OnReorder else NotOnReorder
                         return! processRequest id cmd AggregateVersion.Irrelevant catalogItemReorder next context 
                     })
           DELETE >=> routef "/item/%s" (fun ids ->
-            fun next context ->
+            authorize >=> fun next context ->
                 task {
                     let id = AggregateId (new Guid(ids))
                     let cmd =   
@@ -131,9 +133,10 @@ module CatalogItemsController =
                     return! processRequest ids cmd AggregateVersion.Irrelevant id next context 
                     
                 })
-          POST >=> route "/item/new" >=>
+          POST >=> route "/item/new" >=> authorize  >=>
                 fun next context ->
                     task {
+                        
                         let! catalogItemM = context.BindModelAsync<Model.CatalogItemModel>()
                         let newId = Guid.NewGuid()
                         let id = AggregateId newId
