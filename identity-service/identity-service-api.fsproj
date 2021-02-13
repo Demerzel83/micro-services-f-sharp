@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
-    <AssemblyName>ordering_service</AssemblyName>
+    <AssemblyName>identity_service</AssemblyName>
     <OutputType>Exe</OutputType>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
@@ -14,8 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="OrdersController.fs" />
+    <Compile Include="ConsentController.fs" />
     <Compile Include="HomeController.fs" />
+    <Compile Include="AccountController.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

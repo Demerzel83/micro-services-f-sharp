@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "basket-service", "basket-service\basket-service.fsproj", "{C2D8D702-DBB7-4AF3-881D-959A5B4DA663}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "basket-service-api", "basket-service\basket-service-api.fsproj", "{C2D8D702-DBB7-4AF3-881D-959A5B4DA663}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "catalog-service", "catalog-service\catalog-service.fsproj", "{EB8F5DB6-FFF1-45AF-9BE6-2FDE7D5BE0E8}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "catalog-service-api", "catalog-service\catalog-service-api.fsproj", "{EB8F5DB6-FFF1-45AF-9BE6-2FDE7D5BE0E8}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "identity-service", "identity-service\identity-service.fsproj", "{525A3A2F-DF0F-443C-9532-31AE83FDE616}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "identity-service-api", "identity-service\identity-service-api.fsproj", "{525A3A2F-DF0F-443C-9532-31AE83FDE616}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "location-service", "location-service\location-service.fsproj", "{69C2805D-A05D-406C-8905-A7FE20318E77}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "location-service-api", "location-service\location-service-api.fsproj", "{69C2805D-A05D-406C-8905-A7FE20318E77}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "marketing-service", "marketing-service\marketing-service.fsproj", "{5FD4D88C-2A20-4241-B775-CAFB73CEDC90}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "marketing-service-api", "marketing-service\marketing-service-api.fsproj", "{5FD4D88C-2A20-4241-B775-CAFB73CEDC90}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "ordering-service", "ordering-service\ordering-service.fsproj", "{35D94269-E56A-4729-B0E2-13D240C67265}"
 EndProject
@@ -43,11 +43,29 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "catalog-type-listener", "ca
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "catalog-brand-listener", "catalog-service\catalog-brand-listener\catalog-brand-listener\catalog-brand-listener.fsproj", "{72CA38AC-2FF9-46AE-B909-92EEB9421B23}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FrontEnd", "FrontEnd", "{6F335F05-69AE-4E16-9933-E4566EAF33AE}"
-EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "catalog-service-infrastructure", "catalog-service\catalog-service-infrastructure\catalog-service-infrastructure.fsproj", "{54E76978-3DC5-468F-B84C-8DDBF3738A76}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "catalog-service-core", "catalog-service\core\catalog-service-core\catalog-service-core.fsproj", "{3644434C-F52F-49D8-A232-BAE9F127F6B9}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "catalog-service-core", "catalog-service\core\catalog-service-core\catalog-service-core.fsproj", "{3644434C-F52F-49D8-A232-BAE9F127F6B9}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "basket-service-core", "basket-service\basket-service-core\basket-service-core\basket-service-core.fsproj", "{D2365D71-15A1-48F0-9FA2-7FB7EA560B7C}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "identity-service-core", "identity-service\identity-service-core\identity-service-core\identity-service-core.fsproj", "{E92DC246-FB73-4170-987C-9D1979F5FDAC}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "location-service-core", "location-service\location-service-core\location-service-core\location-service-core.fsproj", "{47613D21-1B15-4B6B-9BB7-A95B64989603}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Webhooks", "Webhooks", "{B5D9E43C-897B-4358-8488-B50912AD8C15}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "marketing-service-core", "marketing-service\marketing-service-core\marketing-service-core\marketing-service-core.fsproj", "{9D20AC22-4C5F-4415-A9CF-9F98FEFD1D18}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ordering-service-core", "ordering-service\ordering-service-core\ordering-service-core\ordering-service-core.fsproj", "{8E83E526-F274-432A-A06B-CB1FA772F02A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Payment", "Payment", "{701812EA-B53E-4E4C-972B-6AFDC487A4DC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiGateways", "ApiGateways", "{CCB9A6D4-A663-45E1-908E-8C13AC58602A}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "payment-service-api", "payment\payment-service\payment-service-api.fsproj", "{C03897BE-EE4C-4405-BB9E-E37BA07A9ED6}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "webhooks-service-api", "webhooks\webhooks-service\webhooks-service-api.fsproj", "{DD8F2546-758C-43AC-AEAC-6F2C930E03AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -119,6 +137,34 @@ Global
 		{3644434C-F52F-49D8-A232-BAE9F127F6B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3644434C-F52F-49D8-A232-BAE9F127F6B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3644434C-F52F-49D8-A232-BAE9F127F6B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2365D71-15A1-48F0-9FA2-7FB7EA560B7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2365D71-15A1-48F0-9FA2-7FB7EA560B7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2365D71-15A1-48F0-9FA2-7FB7EA560B7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2365D71-15A1-48F0-9FA2-7FB7EA560B7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E92DC246-FB73-4170-987C-9D1979F5FDAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E92DC246-FB73-4170-987C-9D1979F5FDAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E92DC246-FB73-4170-987C-9D1979F5FDAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E92DC246-FB73-4170-987C-9D1979F5FDAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47613D21-1B15-4B6B-9BB7-A95B64989603}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47613D21-1B15-4B6B-9BB7-A95B64989603}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47613D21-1B15-4B6B-9BB7-A95B64989603}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47613D21-1B15-4B6B-9BB7-A95B64989603}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D20AC22-4C5F-4415-A9CF-9F98FEFD1D18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D20AC22-4C5F-4415-A9CF-9F98FEFD1D18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D20AC22-4C5F-4415-A9CF-9F98FEFD1D18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D20AC22-4C5F-4415-A9CF-9F98FEFD1D18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E83E526-F274-432A-A06B-CB1FA772F02A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E83E526-F274-432A-A06B-CB1FA772F02A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E83E526-F274-432A-A06B-CB1FA772F02A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E83E526-F274-432A-A06B-CB1FA772F02A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C03897BE-EE4C-4405-BB9E-E37BA07A9ED6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C03897BE-EE4C-4405-BB9E-E37BA07A9ED6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C03897BE-EE4C-4405-BB9E-E37BA07A9ED6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C03897BE-EE4C-4405-BB9E-E37BA07A9ED6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD8F2546-758C-43AC-AEAC-6F2C930E03AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD8F2546-758C-43AC-AEAC-6F2C930E03AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD8F2546-758C-43AC-AEAC-6F2C930E03AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD8F2546-758C-43AC-AEAC-6F2C930E03AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -140,6 +186,13 @@ Global
 		{72CA38AC-2FF9-46AE-B909-92EEB9421B23} = {B3DE9C10-B176-4DA0-B682-EC437A93D143}
 		{54E76978-3DC5-468F-B84C-8DDBF3738A76} = {B3DE9C10-B176-4DA0-B682-EC437A93D143}
 		{3644434C-F52F-49D8-A232-BAE9F127F6B9} = {B3DE9C10-B176-4DA0-B682-EC437A93D143}
+		{D2365D71-15A1-48F0-9FA2-7FB7EA560B7C} = {8F94D11E-046B-4948-B395-8F4BD9C73792}
+		{E92DC246-FB73-4170-987C-9D1979F5FDAC} = {0BD7BD75-32B2-47ED-9915-531A302756E2}
+		{47613D21-1B15-4B6B-9BB7-A95B64989603} = {F67CE2CB-8592-4435-B807-504D8B62BD2A}
+		{9D20AC22-4C5F-4415-A9CF-9F98FEFD1D18} = {578F34D7-74FC-490C-BDA9-D4880A0ABE37}
+		{8E83E526-F274-432A-A06B-CB1FA772F02A} = {D98CFBD6-110F-4CA9-B359-0C78EC48B673}
+		{C03897BE-EE4C-4405-BB9E-E37BA07A9ED6} = {701812EA-B53E-4E4C-972B-6AFDC487A4DC}
+		{DD8F2546-758C-43AC-AEAC-6F2C930E03AA} = {B5D9E43C-897B-4358-8488-B50912AD8C15}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {06EEC465-720A-4360-B335-E74577C37E69}

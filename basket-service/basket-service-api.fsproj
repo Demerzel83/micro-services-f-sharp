@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DebugType>portable</DebugType>
-    <AssemblyName>location_service</AssemblyName>
+    <AssemblyName>basket_service</AssemblyName>
     <OutputType>Exe</OutputType>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
@@ -14,6 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="HomeController.fs" />
+    <Compile Include="BasketController.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

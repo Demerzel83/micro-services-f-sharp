@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>identity_service_core</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="ApplicationUser.fs" />
+    <Compile Include="AccountViewModels.fs" />
+    <Compile Include="ManageViewModels.fs" />
+  </ItemGroup>
+
+</Project>

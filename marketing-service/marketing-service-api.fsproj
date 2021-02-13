@@ -14,6 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="PicController.fs" />
+    <Compile Include="LocationsController.fs" />
+    <Compile Include="HomeController.fs" />
+    <Compile Include="CampaignsController.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
