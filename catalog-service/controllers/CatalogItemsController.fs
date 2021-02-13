@@ -2,14 +2,16 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
 
 open FSharp.Control.Tasks.V2
 open Giraffe
-open Microsoft.eShopOnContainers.Services.Catalog.API.ReadModel
-open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogItemAggregate
-open Microsoft.eShopOnContainers.Services.Catalog.API.Commands
-open Microsoft.eShopOnContainers.Services.Catalog.SqlServer.Commands
-open Types
 open System
 open Chessie.ErrorHandling
 open Microsoft.AspNetCore.Authentication.JwtBearer
+
+open Microsoft.eShopOnContainers.Services.Catalog.Core.ReadModel
+open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogItemAggregate
+open Microsoft.eShopOnContainers.Services.Catalog.Core.Commands
+open Microsoft.eShopOnContainers.Services.Catalog.Core.Types
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer.Commands
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.ReadModel
 
 module CatalogItemsController =
     let processRequest (id:string) (cmd:Command) (versionNumber:AggregateVersion) (model:'T) next context =

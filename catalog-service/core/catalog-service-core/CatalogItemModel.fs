@@ -1,7 +1,7 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Catalog.API.ReadModel
+﻿namespace Microsoft.eShopOnContainers.Services.Catalog.Core.ReadModel
 
 open System
-open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogItemAggregate
+open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogItemAggregate
 
 
 module Model =

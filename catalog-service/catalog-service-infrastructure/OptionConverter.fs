@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Catalog.Utils
+﻿namespace Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.Utils
 
 module Json =
     open System

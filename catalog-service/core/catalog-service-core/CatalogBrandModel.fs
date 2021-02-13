@@ -1,6 +1,6 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Catalog.API.CatalogBrandModel
+﻿namespace Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogBrandModel
 
-open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogBrandAggregate
+open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogBrandAggregate
 
 module Model =
 

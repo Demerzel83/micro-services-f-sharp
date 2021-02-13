@@ -1,9 +1,9 @@
-﻿module Microsoft.eShopOnContainers.Services.Catalog.API.Commands
+﻿module Microsoft.eShopOnContainers.Services.Catalog.Core.Commands
 
 open System
 open Chessie.ErrorHandling
-open Microsoft.eShopOnContainers.Services.Catalog.API.Types
-open Microsoft.eShopOnContainers.Services.Catalog.API.Events
+open Microsoft.eShopOnContainers.Services.Catalog.Core.Types
+open Microsoft.eShopOnContainers.Services.Catalog.Core.Events
 
 let createCommand aggregateId (version, causationId, correlationId, processId) payload =
     let commandId = Guid.NewGuid()

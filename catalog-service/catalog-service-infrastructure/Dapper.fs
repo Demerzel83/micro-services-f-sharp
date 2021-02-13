@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Catalog.API.Utils
+﻿namespace Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.Utils
 
 module Dapper =
 

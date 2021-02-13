@@ -2,15 +2,16 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
 
 open FSharp.Control.Tasks.V2
 open Giraffe
-open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogBrandReadModel
-open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogBrandAggregate
-open Microsoft.eShopOnContainers.Services.Catalog.API.Commands
-open Microsoft.eShopOnContainers.Services.Catalog.SqlServer.Commands
-open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogBrandModel
-open Types
 open System
 open Chessie.ErrorHandling
 open Microsoft.AspNetCore.Authentication.JwtBearer
+
+open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogBrandAggregate
+open Microsoft.eShopOnContainers.Services.Catalog.Core.Commands
+open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogBrandModel
+open Microsoft.eShopOnContainers.Services.Catalog.Core.Types
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.CatalogBrandReadModel
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer.Commands
 
 module CatalogBrandsController =
     let authorize =

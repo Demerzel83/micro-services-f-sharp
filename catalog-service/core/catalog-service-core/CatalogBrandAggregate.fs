@@ -1,8 +1,8 @@
-﻿module Microsoft.eShopOnContainers.Services.Catalog.API.CatalogBrandAggregate
+﻿module Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogBrandAggregate
 
 open Chessie.ErrorHandling
-open Microsoft.eShopOnContainers.Services.Catalog.API.Commands
-open Microsoft.eShopOnContainers.Services.Catalog.API.Types
+open Microsoft.eShopOnContainers.Services.Catalog.Core.Commands
+open Microsoft.eShopOnContainers.Services.Catalog.Core.Types
 open System
 
 let catelogBrandCategory = Category "CatalogBrand"

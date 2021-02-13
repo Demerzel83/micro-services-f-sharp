@@ -2,17 +2,13 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
 
 open FSharp.Control.Tasks.V2
 open Giraffe
-open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogItemAggregate
-open Microsoft.eShopOnContainers.Services.Catalog.API.Commands
-open Microsoft.eShopOnContainers.Services.Catalog.SqlServer.Commands
-open Types
 open System
-open Chessie.ErrorHandling
-open Microsoft.eShopOnContainers.Services.Catalog.API.Model
 open Microsoft.IdentityModel.Tokens
 open System.IdentityModel.Tokens.Jwt
 open System.Security.Claims
 open System.Text
+
+open Microsoft.eShopOnContainers.Services.Catalog.API.Model
 open Microsoft.eShopOnContainers.Services.Catalog.API.Model.Login
 
 module LoginController =

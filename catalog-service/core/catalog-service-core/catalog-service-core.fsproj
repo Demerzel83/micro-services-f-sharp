@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>catalog_service_core</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Types.fs" />
+    <Compile Include="Events.fs" />
+    <Compile Include="Commands.fs" />
+    <Compile Include="CatalogBrandAggregate.fs" />
+    <Compile Include="CatalogBrandModel.fs" />
+    <Compile Include="CatalogTypeAggregate.fs" />
+    <Compile Include="CatalogTypeModel.fs" />
+    <Compile Include="CatalogItemAggregate.fs" />
+    <Compile Include="CatalogItemModel.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Chessie" Version="0.6.0" />
+  </ItemGroup>
+
+</Project>

@@ -23,28 +23,10 @@
 
   <ItemGroup>
     <None Include="App.config" />
-    <Compile Include="Types.fs" />
-    <Compile Include="Events.fs" />
-    <Compile Include="Commands.fs" />
     <Content Include="Notes.txt" />
     <Compile Include="model\Login.fs" />
-    <Compile Include="model\CatalogBrandAggregate.fs" />
-    <Compile Include="model\CatalogTypeAggregate.fs" />
-    <Compile Include="model\CatalogItemAggregate.fs" />
-    <Compile Include="Utils\OptionConverter.fs" />
-    <Compile Include="Utils\Dapper.fs" />
     <Compile Include="ViewModel\PaginatedItemsViewModel.fs" />
     <Compile Include="CatalogSettings.fs" />
-    <Compile Include="infrastructure\SqlServer.fs" />
-    <Compile Include="infrastructure\CatalogBrandCommandHandler.fs" />
-    <Compile Include="infrastructure\CatalogTypeCommandHandler.fs" />
-    <Compile Include="infrastructure\CatalogItemCommandHanlder.fs" />
-    <Compile Include="model\ReadModel.fs" />
-    <Compile Include="model\CatalogItemModel.fs" />
-    <Compile Include="model\CatalogTypeModel.fs" />
-    <Compile Include="model\CatalogBrandModel.fs" />
-    <Compile Include="model\CatalogTypeReadModel.fs" />
-    <Compile Include="model\CatalogBrandReadModel.fs" />
     <Compile Include="controllers\LoginController.fs" />
     <Compile Include="controllers\CatalogBrandsController.fs" />
     <Compile Include="controllers\CatalogTypesController.fs" />
@@ -55,7 +37,6 @@
   <ItemGroup>
     <None Include="dockerfile" />
     <None Include="README.md" />
-    <None Include="sql\create-database.sql" />
     <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="WebRoot\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -63,7 +44,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="IntegrationEvents\" />
+    <ProjectReference Include="catalog-service-infrastructure\catalog-service-infrastructure.fsproj" />
+    <ProjectReference Include="core\catalog-service-core\catalog-service-core.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

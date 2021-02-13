@@ -1,6 +1,6 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Catalog.SqlServer
+﻿namespace Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer
 
-open Microsoft.eShopOnContainers.Services.Catalog.API.Types
+open Microsoft.eShopOnContainers.Services.Catalog.Core.Types
 open System
 open FSharp.Data.Sql
 open Chessie.ErrorHandling

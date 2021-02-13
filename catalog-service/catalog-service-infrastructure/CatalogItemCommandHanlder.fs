@@ -1,8 +1,8 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Catalog.CommandHandler
+﻿namespace Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.CommandHandler
 
 open Chessie.ErrorHandling
-open Microsoft.eShopOnContainers.Services.Catalog.SqlServer
-open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogItemAggregate
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer
+open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogItemAggregate
 
 module CatalogItemCommandHanlder = 
     module private Helpers =

@@ -1,4 +1,4 @@
-﻿module Microsoft.eShopOnContainers.Services.Catalog.API.Types
+﻿module Microsoft.eShopOnContainers.Services.Catalog.Core.Types
 
     open System
     open Chessie.ErrorHandling

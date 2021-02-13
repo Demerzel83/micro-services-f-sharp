@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>catalog_service_infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Dapper.fs" />
+    <Compile Include="OptionConverter.fs" />
+    <Compile Include="SqlServer.fs" />
+    <Compile Include="CatalogBrandReadModel.fs" />
+    <Compile Include="CatalogTypeReadModel.fs" />
+    <Compile Include="ReadModel.fs" />
+    <Compile Include="CatalogItemCommandHanlder.fs" />
+    <Compile Include="CatalogTypeCommandHandler.fs" />
+    <Compile Include="CatalogBrandCommandHandler.fs" />
+    <None Include="create-database.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Chessie" Version="0.6.0" />
+    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="FSharp.Data.SqlClient" Version="2.0.7" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="SQLProvider" Version="1.1.100" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\core\catalog-service-core\catalog-service-core.fsproj" />
+  </ItemGroup>
+
+</Project>

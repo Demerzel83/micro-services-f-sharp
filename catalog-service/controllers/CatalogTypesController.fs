@@ -2,15 +2,16 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
 
 open FSharp.Control.Tasks.V2
 open Giraffe
-open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogTypeReadModel
-open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogTypeAggregate
-open Microsoft.eShopOnContainers.Services.Catalog.API.Commands
-open Microsoft.eShopOnContainers.Services.Catalog.SqlServer.Commands
-open Types
 open System
 open Chessie.ErrorHandling
-open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogTypeModel
+open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogTypeModel
 open Microsoft.AspNetCore.Authentication.JwtBearer
+
+open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogTypeAggregate
+open Microsoft.eShopOnContainers.Services.Catalog.Core.Commands
+open Microsoft.eShopOnContainers.Services.Catalog.Core.Types
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.CatalogTypeReadModel
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer.Commands
 
 module CatalogTypesController =
     let authorize =

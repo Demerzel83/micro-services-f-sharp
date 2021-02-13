@@ -1,8 +1,8 @@
-﻿module Microsoft.eShopOnContainers.Services.Catalog.CataloBrandCommandHandler
+﻿module Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.CataloBrandCommandHandler
 
 open Chessie.ErrorHandling
-open Microsoft.eShopOnContainers.Services.Catalog.SqlServer
-open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogBrandAggregate
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer
+open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogBrandAggregate
 
 module CatalogBrandCommandHanlder = 
     module private Helpers =

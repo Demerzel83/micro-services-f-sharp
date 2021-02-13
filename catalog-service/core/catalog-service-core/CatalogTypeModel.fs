@@ -1,6 +1,6 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Catalog.API.CatalogTypeModel
+﻿namespace Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogTypeModel
 
-open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogTypeAggregate
+open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogTypeAggregate
 
 module Model =
 

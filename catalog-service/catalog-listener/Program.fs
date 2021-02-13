@@ -1,9 +1,6 @@
-﻿// Learn more about F# at http://fsharp.org
-
-open System
-open Chessie.ErrorHandling
-open Microsoft.eShopOnContainers.Services.Catalog.CommandHandler
-open Microsoft.eShopOnContainers.Services.Catalog.API
+﻿open Chessie.ErrorHandling
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.CommandHandler
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.ReadModel
 
 [<EntryPoint>]
 let main argv =
@@ -21,7 +18,7 @@ let main argv =
                              | Bad f -> printfn "%A" f)
             | Bad f -> printfn "%A" f
 
-        let eventRes = ReadModel.Writer.handleEvents ()
+        let eventRes = Writer.handleEvents ()
         let res2 =
             match eventRes with
             | Ok(r,_) ->

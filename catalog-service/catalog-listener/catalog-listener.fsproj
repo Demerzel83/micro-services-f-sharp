@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\catalog-service.fsproj" />
+    <ProjectReference Include="..\catalog-service-infrastructure\catalog-service-infrastructure.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,7 +1,7 @@
-﻿module Microsoft.eShopOnContainers.Services.Catalog.API.Events
+﻿module Microsoft.eShopOnContainers.Services.Catalog.Core.Events
 
 open System
-open Microsoft.eShopOnContainers.Services.Catalog.API.Types
+open Microsoft.eShopOnContainers.Services.Catalog.Core.Types
 open Chessie.ErrorHandling
 
 let createEvent aggregateId (causationId, processId, correlationId) payload =

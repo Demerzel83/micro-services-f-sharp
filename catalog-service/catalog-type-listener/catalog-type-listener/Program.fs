@@ -2,8 +2,8 @@
 
 open System
 open Chessie.ErrorHandling
-open Microsoft.eShopOnContainers.Services.Catalog.CatalogTypeCommandHandler
-open Microsoft.eShopOnContainers.Services.Catalog.API
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.CatalogTypeCommandHandler
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.ReadModel
 
 [<EntryPoint>]
 let main argv =
@@ -21,7 +21,7 @@ let main argv =
                              | Bad f -> printfn "%A" f)
             | Bad f -> printfn "%A" f
 
-        let eventRes = ReadModel.Writer.handleEvents ()
+        let eventRes = Writer.handleEvents ()
         let res2 =
             match eventRes with
             | Ok(r,_) ->

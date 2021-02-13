@@ -3,7 +3,15 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CatalogTypes.fs" />
     <Compile Include="deferred.fs" />
+    <Compile Include="AppTypes.fs" />
+    <Compile Include="Decoders.fs" />
+    <Compile Include="Encoders.fs" />
+    <Compile Include="Api.fs" />
+
+    <Compile Include="Update.fs" />
+    <Compile Include="Render.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>

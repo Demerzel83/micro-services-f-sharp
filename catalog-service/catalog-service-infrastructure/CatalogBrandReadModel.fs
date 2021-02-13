@@ -1,11 +1,11 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Catalog.API.CatalogBrandReadModel
+﻿namespace Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.CatalogBrandReadModel
 
 open FSharp.Data.Sql
 open System
 open Chessie.ErrorHandling
-open Microsoft.eShopOnContainers.Services.Catalog.API.Types
-open Microsoft.eShopOnContainers.Services.Catalog.API.CatalogBrandAggregate
-open Microsoft.eShopOnContainers.Services.Catalog.SqlServer
+open Microsoft.eShopOnContainers.Services.Catalog.Core.Types
+open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogBrandAggregate
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer
 
 type CatalogBrandDTO = {
     Id : Guid
