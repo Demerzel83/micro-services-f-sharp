@@ -11,4 +11,8 @@
     <Compile Include="ManageViewModels.fs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="5.0.1" />
+  </ItemGroup>
+
 </Project>

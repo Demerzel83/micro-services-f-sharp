@@ -7,15 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="dockerfile" />
     <Compile Include="Program.fs" />
   </ItemGroup>
+
+  <ItemGroup />
 
   <ItemGroup>
     <ProjectReference Include="..\catalog-service-infrastructure\catalog-service-infrastructure.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="5.0.0" />
+    <PackageReference Update="FSharp.Core" Version="5.0.1" />
   </ItemGroup>
 
 </Project>
