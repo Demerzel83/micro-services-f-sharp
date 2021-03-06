@@ -24,7 +24,6 @@ module Program =
             CatalogItemsController.getHandlers()
             CatalogTypesController.getHandlers()
             CatalogBrandsController.getHandlers()
-            LoginController.getHandlers()
             setStatusCode 404 >=> text "Not Catalog API" ]
 
     // ---------------------------------

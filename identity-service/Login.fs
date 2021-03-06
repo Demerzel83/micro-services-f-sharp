@@ -1,4 +1,4 @@
-﻿module Microsoft.eShopOnContainers.Services.Catalog.API.Model.Login
+﻿module Microsoft.eShopOnContainers.Services.Identity.API.Model.Login
 
 type LoginViewModel =
     {

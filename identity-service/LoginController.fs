@@ -1,4 +1,4 @@
-namespace Microsoft.eShopOnContainers.Services.Catalog.API
+namespace Microsoft.eShopOnContainers.Services.Identity.API
 
 open FSharp.Control.Tasks.V2
 open Giraffe
@@ -8,8 +8,8 @@ open System.IdentityModel.Tokens.Jwt
 open System.Security.Claims
 open System.Text
 
-open Microsoft.eShopOnContainers.Services.Catalog.API.Model
-open Microsoft.eShopOnContainers.Services.Catalog.API.Model.Login
+open Microsoft.eShopOnContainers.Services.Identity.API.Model
+open Microsoft.eShopOnContainers.Services.Identity.API.Model.Login
 
 module LoginController =
     let secret = "spadR2dre#u-ruBrE@TepA&*Uf@U"

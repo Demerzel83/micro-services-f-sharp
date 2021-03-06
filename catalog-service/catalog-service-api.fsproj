@@ -24,13 +24,14 @@
   <ItemGroup>
     <None Include="App.config" />
     <Content Include="Notes.txt" />
-    <Compile Include="model\Login.fs" />
     <Compile Include="ViewModel\PaginatedItemsViewModel.fs" />
-    <Compile Include="CatalogSettings.fs" />
-    <Compile Include="controllers\LoginController.fs" />
     <Compile Include="controllers\CatalogBrandsController.fs" />
     <Compile Include="controllers\CatalogTypesController.fs" />
     <Compile Include="controllers\CatalogItemsController.fs" />
+    <Content Include="WebRoot\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Compile Include="CatalogSettings.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
@@ -38,9 +39,6 @@
     <None Include="dockerfile" />
     <None Include="README.md" />
     <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="WebRoot\**\*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>

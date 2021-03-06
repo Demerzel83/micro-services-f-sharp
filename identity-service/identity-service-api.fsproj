@@ -10,10 +10,13 @@
 
   <ItemGroup>
     <PackageReference Include="Giraffe" Version="4.1.*" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
     <PackageReference Include="TaskBuilder.fs" Version="2.1.*" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Login.fs" />
+    <Compile Include="LoginController.fs" />
     <Compile Include="ConsentController.fs" />
     <Compile Include="HomeController.fs" />
     <Compile Include="AccountController.fs" />

@@ -29,3 +29,8 @@ dotnet run src/identity_service
 ```
 
 After the application has started visit [http://localhost:5000](http://localhost:5000) in your preferred browser.
+
+Notes:
+Holding certificate
+References to all the other apis
+It redirectes to other services

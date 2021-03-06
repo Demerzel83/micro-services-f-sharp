@@ -29,3 +29,10 @@ dotnet run src/marketing_service
 ```
 
 After the application has started visit [http://localhost:5000](http://localhost:5000) in your preferred browser.
+
+Database: sql server
+
+ Integration Events:
+    
+    UserLocationUpdatedIntegrationEvent -> UPdate Marketing data
+    

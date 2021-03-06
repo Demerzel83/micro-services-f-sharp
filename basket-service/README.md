@@ -33,3 +33,8 @@ After the application has started visit [http://localhost:5000](http://localhost
 Steps to build the docker image and run the docker container
 docker build -t basketservice .
 docker run -p 5000:80 -p 5001:80 -v ${HOME}/.aspnet/https:/https/ basketservice
+
+- Integration Events:
+    - Database: redis
+    - OrderStartedIntegrationEvent -> it cleans the existing basket for the user
+    - ProductPriceChangedIntegrationEvent -> it updates the prices for existing items in the basket

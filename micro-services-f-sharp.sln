@@ -47,25 +47,27 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "catalog-service-infrastruct
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "catalog-service-core", "catalog-service\core\catalog-service-core\catalog-service-core.fsproj", "{3644434C-F52F-49D8-A232-BAE9F127F6B9}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "basket-service-core", "basket-service\basket-service-core\basket-service-core\basket-service-core.fsproj", "{D2365D71-15A1-48F0-9FA2-7FB7EA560B7C}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "basket-service-core", "basket-service\basket-service-core\basket-service-core\basket-service-core.fsproj", "{D2365D71-15A1-48F0-9FA2-7FB7EA560B7C}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "identity-service-core", "identity-service\identity-service-core\identity-service-core\identity-service-core.fsproj", "{E92DC246-FB73-4170-987C-9D1979F5FDAC}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "identity-service-core", "identity-service\identity-service-core\identity-service-core\identity-service-core.fsproj", "{E92DC246-FB73-4170-987C-9D1979F5FDAC}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "location-service-core", "location-service\location-service-core\location-service-core\location-service-core.fsproj", "{47613D21-1B15-4B6B-9BB7-A95B64989603}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "location-service-core", "location-service\location-service-core\location-service-core\location-service-core.fsproj", "{47613D21-1B15-4B6B-9BB7-A95B64989603}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Webhooks", "Webhooks", "{B5D9E43C-897B-4358-8488-B50912AD8C15}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "marketing-service-core", "marketing-service\marketing-service-core\marketing-service-core\marketing-service-core.fsproj", "{9D20AC22-4C5F-4415-A9CF-9F98FEFD1D18}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "marketing-service-core", "marketing-service\marketing-service-core\marketing-service-core\marketing-service-core.fsproj", "{9D20AC22-4C5F-4415-A9CF-9F98FEFD1D18}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ordering-service-core", "ordering-service\ordering-service-core\ordering-service-core\ordering-service-core.fsproj", "{8E83E526-F274-432A-A06B-CB1FA772F02A}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "ordering-service-core", "ordering-service\ordering-service-core\ordering-service-core\ordering-service-core.fsproj", "{8E83E526-F274-432A-A06B-CB1FA772F02A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Payment", "Payment", "{701812EA-B53E-4E4C-972B-6AFDC487A4DC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiGateways", "ApiGateways", "{CCB9A6D4-A663-45E1-908E-8C13AC58602A}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "payment-service-api", "payment\payment-service\payment-service-api.fsproj", "{C03897BE-EE4C-4405-BB9E-E37BA07A9ED6}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "payment-service-api", "payment\payment-service\payment-service-api.fsproj", "{C03897BE-EE4C-4405-BB9E-E37BA07A9ED6}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "webhooks-service-api", "webhooks\webhooks-service\webhooks-service-api.fsproj", "{DD8F2546-758C-43AC-AEAC-6F2C930E03AA}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "webhooks-service-api", "webhooks\webhooks-service\webhooks-service-api.fsproj", "{DD8F2546-758C-43AC-AEAC-6F2C930E03AA}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Test", "api-gateways\Test\Test.fsproj", "{37E3E779-E418-4E85-88FA-1CA1CBE1A13C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -165,6 +167,10 @@ Global
 		{DD8F2546-758C-43AC-AEAC-6F2C930E03AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD8F2546-758C-43AC-AEAC-6F2C930E03AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD8F2546-758C-43AC-AEAC-6F2C930E03AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37E3E779-E418-4E85-88FA-1CA1CBE1A13C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37E3E779-E418-4E85-88FA-1CA1CBE1A13C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37E3E779-E418-4E85-88FA-1CA1CBE1A13C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37E3E779-E418-4E85-88FA-1CA1CBE1A13C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -193,6 +199,7 @@ Global
 		{8E83E526-F274-432A-A06B-CB1FA772F02A} = {D98CFBD6-110F-4CA9-B359-0C78EC48B673}
 		{C03897BE-EE4C-4405-BB9E-E37BA07A9ED6} = {701812EA-B53E-4E4C-972B-6AFDC487A4DC}
 		{DD8F2546-758C-43AC-AEAC-6F2C930E03AA} = {B5D9E43C-897B-4358-8488-B50912AD8C15}
+		{37E3E779-E418-4E85-88FA-1CA1CBE1A13C} = {CCB9A6D4-A663-45E1-908E-8C13AC58602A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {06EEC465-720A-4360-B335-E74577C37E69}

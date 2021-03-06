@@ -64,16 +64,16 @@ module RenderFn =
         ]
 
   let render (state: State) (dispatch: Msg -> unit) =
-    let body = (match (state.CatalogItem, state.CatalogItems, state.Loading) with
-      | (InProgress, _, _) | (_, InProgress, _) | (_,_, true) -> Html.div [ Html.label [ prop.text "Loading ..."]]
-      | (HasNotStartedYet, HasNotStartedYet, _) -> Html.div [ Html.label [ prop.text "Nothing is loaded"]]
-      | (Resolved catalogItem, Resolved catalogItems, false) ->
+    let body =
+      (match (state.CatalogItem, state.CatalogItems, state.Loading) with
+      | (Deferred.InProgress, _, _) | (_, Deferred.InProgress, _) | (_,_, true) -> Html.div [ Html.label [ prop.text "Loading ..."]]
+      | (Deferred.HasNotStartedYet, _, _) -> Html.div [ Html.label [ prop.text "Nothing is loaded"]]
+      | (_, Deferred.HasNotStartedYet, _) -> Html.div [ Html.label [ prop.text "Nothing is loaded"]]
+      | (Deferred.Resolved catalogItem, Deferred.Resolved catalogItems, false) ->
           Html.div [
             showCatalogItems catalogItems
             showCatalogItem catalogItem
           ]
-      | (Resolved catalogItem, _, false) -> showCatalogItem catalogItem
-      | (_, Resolved catalogItems, false) -> showCatalogItems catalogItems
       | _ -> Html.div [ Html.label [ prop.text "Default"]])
 
     Html.div[

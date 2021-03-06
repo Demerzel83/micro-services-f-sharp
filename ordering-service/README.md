@@ -29,3 +29,50 @@ dotnet run src/ordering_service
 ```
 
 After the application has started visit [http://localhost:5000](http://localhost:5000) in your preferred browser.
+
+Notes:
+cqrs
+
+database: sql server
+
+Notes:
+    using IMediator
+
+Grpc:
+    - Exposes CreateOrderDraftFromBasketData
+ Commands:
+    - CancelOrderCommand
+    - CreateOrderCommand
+    - CreateOrderDraftCommand
+    - IdentifiedCommand
+    - SetAwaitingValidationOrderStatusCommand
+    - SetPaidOrderStatusCommand
+    - SetStockConfirmedOrderStatusCommand
+    - SetStockRejectedOrderStatusCommand
+    - ShipOrderCommand
+
+Domain Events:
+    - BuyerAndPaymentMethodVerifiedDomainEvent
+    - OrderCancelledDomainEvent
+    - OrderStatusChangedToAwaitingValidationDomainEvent
+    - OrderStatusChangedToPaidDomainEvent
+    - OrderShippedDomainEvent
+    - OrderStartedDomainEvent
+    - OrderStatusChangedToStockConfirmedDomainEvent
+ 
+ Integration Events:
+    GracePeriodConfirmedIntegrationEvent ->
+    OrderPaymentFailedIntegrationEvent ->               
+    OrderPaymentSucceededIntegrationEvent -> 
+    OrderStockConfirmedIntegrationEvent ->
+    UserCheckoutAcceptedIntegrationEvent ->
+    OrderStockRejectedIntegrationEvent ->
+    Publish:
+
+Signalr: sending notifications about the following events
+    - OrderStatusChangedToAwaitingValidationIntegrationEvent
+    - OrderStatusChangedToCancelledIntegrationEvent
+    - OrderStatusChangedToPaidIntegrationEvent
+    - OrderStatusChangedToShippedIntegrationEvent
+    - OrderStatusChangedToStockConfirmedIntegrationEvent
+    - OrderStatusChangedToSubmittedIntegrationEvent
