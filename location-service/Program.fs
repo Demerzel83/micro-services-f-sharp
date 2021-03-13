@@ -11,61 +11,13 @@ module Program =
     open Microsoft.Extensions.Logging
     open Microsoft.Extensions.DependencyInjection
     open Giraffe
-
-    // ---------------------------------
-    // Models
-    // ---------------------------------
-
-    type Message =
-        {
-            Text : string
-        }
-
-    // ---------------------------------
-    // Views
-    // ---------------------------------
-
-    module Views =
-        open GiraffeViewEngine
-
-        let layout (content: XmlNode list) =
-            html [] [
-                head [] [
-                    title []  [ encodedText "location_service" ]
-                    link [ _rel  "stylesheet"
-                           _type "text/css"
-                           _href "/main.css" ]
-                ]
-                body [] content
-            ]
-
-        let partial () =
-            h1 [] [ encodedText "location_service" ]
-
-        let index (model : Message) =
-            [
-                partial()
-                p [] [ encodedText model.Text ]
-            ] |> layout
-
-    // ---------------------------------
-    // Web app
-    // ---------------------------------
-
-    let indexHandler (name : string) =
-        let greetings = sprintf "Hello %s, from Giraffe!" name
-        let model     = { Text = greetings }
-        let view      = Views.index model
-        htmlView view
+    open Microsoft.eShopOnContainers.Services.Location.API
 
     let webApp =
         choose [
-            GET >=>
-                choose [
-                    route "/" >=> indexHandler "world"
-                    routef "/hello/%s" indexHandler
-                ]
-            setStatusCode 404 >=> text "Not Found Location Service" ]
+            LocationsController.getHandlers()
+            HomeController.getHandlers()
+            setStatusCode 404 >=> text "Not Location API" ]
 
     // ---------------------------------
     // Error handler

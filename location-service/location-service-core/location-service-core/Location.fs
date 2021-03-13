@@ -2,6 +2,7 @@
 
 open System
 open MongoDB.Driver.GeoJsonObjectModel
+open MongoDB.Bson
 
 module LocationTypes =
     type LocationPoint = {
@@ -16,7 +17,7 @@ module LocationTypes =
     }
 
     type Locations = {
-        Id : string
+        Id : BsonObjectId
         LocationId : string
         Code : string
         Parent_Id : string

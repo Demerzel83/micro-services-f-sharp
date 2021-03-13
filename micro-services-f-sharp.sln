@@ -67,7 +67,17 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "payment-service-api", "paym
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "webhooks-service-api", "webhooks\webhooks-service\webhooks-service-api.fsproj", "{DD8F2546-758C-43AC-AEAC-6F2C930E03AA}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Test", "api-gateways\Test\Test.fsproj", "{37E3E779-E418-4E85-88FA-1CA1CBE1A13C}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Test", "api-gateways\Test\Test.fsproj", "{37E3E779-E418-4E85-88FA-1CA1CBE1A13C}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "location-service-infrastructure", "location-service\location-service-infrastructure\location-service-infrastructure\location-service-infrastructure.fsproj", "{925D539F-DA4F-4930-97C3-1C9095D954A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{B7ECE9D7-053C-4B9F-93AF-8EDBBAE3F7F7}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "rabbitmq", "utils\rabbitmq\rabbitmq.fsproj", "{41C47177-C7E5-4B87-B48E-189AAEE6D43D}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "basket-service-infrastructure", "basket-service\basket-service-infrastucture\basket-service-infrastructure\basket-service-infrastructure.fsproj", "{A10422BE-6AD8-41E7-BCEB-CB08DA624C3A}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "rabbitmq-test", "utils\rabbitmq-test\rabbitmq-test\rabbitmq-test.fsproj", "{9BBA8F35-8634-48A0-B292-B2BC4E4D8B8D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -171,6 +181,22 @@ Global
 		{37E3E779-E418-4E85-88FA-1CA1CBE1A13C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37E3E779-E418-4E85-88FA-1CA1CBE1A13C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37E3E779-E418-4E85-88FA-1CA1CBE1A13C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{925D539F-DA4F-4930-97C3-1C9095D954A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{925D539F-DA4F-4930-97C3-1C9095D954A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{925D539F-DA4F-4930-97C3-1C9095D954A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{925D539F-DA4F-4930-97C3-1C9095D954A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41C47177-C7E5-4B87-B48E-189AAEE6D43D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41C47177-C7E5-4B87-B48E-189AAEE6D43D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41C47177-C7E5-4B87-B48E-189AAEE6D43D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41C47177-C7E5-4B87-B48E-189AAEE6D43D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A10422BE-6AD8-41E7-BCEB-CB08DA624C3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A10422BE-6AD8-41E7-BCEB-CB08DA624C3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A10422BE-6AD8-41E7-BCEB-CB08DA624C3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A10422BE-6AD8-41E7-BCEB-CB08DA624C3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BBA8F35-8634-48A0-B292-B2BC4E4D8B8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BBA8F35-8634-48A0-B292-B2BC4E4D8B8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BBA8F35-8634-48A0-B292-B2BC4E4D8B8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BBA8F35-8634-48A0-B292-B2BC4E4D8B8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -200,6 +226,10 @@ Global
 		{C03897BE-EE4C-4405-BB9E-E37BA07A9ED6} = {701812EA-B53E-4E4C-972B-6AFDC487A4DC}
 		{DD8F2546-758C-43AC-AEAC-6F2C930E03AA} = {B5D9E43C-897B-4358-8488-B50912AD8C15}
 		{37E3E779-E418-4E85-88FA-1CA1CBE1A13C} = {CCB9A6D4-A663-45E1-908E-8C13AC58602A}
+		{925D539F-DA4F-4930-97C3-1C9095D954A9} = {F67CE2CB-8592-4435-B807-504D8B62BD2A}
+		{41C47177-C7E5-4B87-B48E-189AAEE6D43D} = {B7ECE9D7-053C-4B9F-93AF-8EDBBAE3F7F7}
+		{A10422BE-6AD8-41E7-BCEB-CB08DA624C3A} = {8F94D11E-046B-4948-B395-8F4BD9C73792}
+		{9BBA8F35-8634-48A0-B292-B2BC4E4D8B8D} = {B7ECE9D7-053C-4B9F-93AF-8EDBBAE3F7F7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {06EEC465-720A-4360-B335-E74577C37E69}
