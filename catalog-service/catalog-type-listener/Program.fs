@@ -1,13 +1,15 @@
-﻿open Chessie.ErrorHandling
-open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.CommandHandler
-//open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer.ReadModel
-open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.MongoDb.ReadModel
+﻿// Learn more about F# at http://fsharp.org
+
+open System
+open Chessie.ErrorHandling
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.CatalogTypeCommandHandler
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer.ReadModel
 
 [<EntryPoint>]
 let main argv =
-    printfn "[INFO] Catalog Item Listener started"
+    printfn "[INFO] Catalog Type Listener started"
     let rec loop() =
-        let eventList = CatalogItemCommandHanlder.processCommandQueue()
+        let eventList = CatalogTypeCommandHanlder.processCommandQueue()
         
         let res =
             match eventList with

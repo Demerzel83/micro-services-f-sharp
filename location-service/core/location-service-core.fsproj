@@ -1,17 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>rabbitmq_test</RootNamespace>
+    <RootNamespace>location_service_core</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Program.fs" />
+    <Compile Include="Location.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\rabbitmq\rabbitmq.fsproj" />
+    <PackageReference Include="MongoDB.Driver" Version="2.12.1" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>catalog_service_infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="App.config" />
+    <Compile Include="MongoDb\Mongodb.fs" />
+    <Compile Include="MongoDb\ReadModel.fs" />
+    <Compile Include="MongoDb\CatalogBrandReadModel.fs" />
+    <Compile Include="MongoDb\CatalogTypeReadModel.fs" />
+    <None Include="SqlServer\create-database.sql" />
+    <Compile Include="SqlServer\Dapper.fs" />
+    <Compile Include="SqlServer\SqlServer.fs" />
+    <Compile Include="SqlServer\CatalogTypeReadModel.fs" />
+    <Compile Include="SqlServer\CatalogBrandReadModel.fs" />
+    <Compile Include="SqlServer\ReadModel.fs" />
+    <Compile Include="OptionConverter.fs" />
+    <Compile Include="CatalogItemCommandHanlder.fs" />
+    <Compile Include="CatalogTypeCommandHandler.fs" />
+    <Compile Include="CatalogBrandCommandHandler.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Chessie" Version="0.6.0" />
+    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="FSharp.Configuration" Version="1.5.0" />
+    <PackageReference Include="FSharp.Data.SqlClient" Version="2.0.7" />
+    <PackageReference Include="MongoDB.Driver" Version="2.12.1" />
+    <PackageReference Include="MongoDB.FSharp" Version="0.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="SQLProvider" Version="1.2.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\core\catalog-service-core.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="5.0.1" />
+  </ItemGroup>
+
+</Project>
