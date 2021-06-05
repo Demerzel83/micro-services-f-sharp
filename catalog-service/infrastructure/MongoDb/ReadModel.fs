@@ -5,12 +5,14 @@ open System
 open Chessie.ErrorHandling
 open MongoDB.Driver
 open MongoDB.Bson
-open MongoDB.FSharp
+//open MongoDB.FSharp
 
 open Microsoft.eShopOnContainers.Services.Catalog.Core.Types
 open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogItemAggregate
 open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.MongoDb
 open System.Linq
+open Microsoft.FSharp.Control
+open System.Threading
 
 type CatalogTypeDTO = {
     Id : Guid
@@ -24,16 +26,18 @@ type CatalogBrandDTO = {
 
 
 type CatalogItemDTO = {
-    Id : Guid
+    Id : ObjectId
     Name : string
     Description : string
     Price: decimal
-    PictureFileName : string option
-    PictureUri: string option
-    CatalogType : CatalogTypeDTO
-    CatalogBrand: CatalogBrandDTO
+    PictureFileName : string
+    PictureUri: string
+    //CatalogType : CatalogTypeDTO
+    CatalogTypeId: Guid
+    //CatalogBrand: CatalogBrandDTO
+    CatalogBrandId: Guid
     AvailableStock: decimal
-    ReStockThreshold: decimal
+    RestockThreshold: decimal
     MaxStockThreshold: decimal
     OnReorder: bool
     LastEventNumber : int
@@ -41,74 +45,91 @@ type CatalogItemDTO = {
 
   
 module private DataAccess =
-    [<Literal>]
-    let ConnectionString = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=false"
+    open MongoDB.Bson
+    open BagnoDB
 
-    [<Literal>]
-    let DbName = "CatalogItems"
+    let collection = "CatalogItems"
+    let database = "CatalogItems"
+       
+    let config = {
+        host = "localhost"
+        port = 27017
+        user = None
+        password = None
+    }
 
-    [<Literal>]
-    let EventsCollectionName = "CatalogItems"
-    
-    let client = MongoClient(ConnectionString)
-    let db = client.GetDatabase(DbName)
-    let catalogItemsCollection = db.GetCollection<CatalogItemDTO>(EventsCollectionName)
-    
+    let connection = 
+        Connection.host config
+        |> Connection.database database
+        |> Connection.collection collection
+
     let loadLastEvent () = 
         try
-            let result = catalogItemsCollection.Find(fun x -> x.LastEventNumber > 0).ToEnumerable().ToList()
-            if result.Count = 0 
-            then ok 0
-            else ok (result.First().LastEventNumber)
-        with ex -> Bad [ Error ex.Message :> IError ]
+            let filterGt = Filter.gt (fun (o: CatalogItemDTO) -> o.LastEventNumber ) 0
+            let filterOpt = FindOptions<CatalogItemDTO>()
+            async {
+                let! result = 
+                    connection
+                    |> Query.filter CancellationToken.None filterOpt filterGt
+                return (if result.Count = 0 
+                    then ok 0
+                    else ok (result.First().LastEventNumber))
+            }
+        with ex -> async { return (Bad [ Error ex.Message :> IError ]) }
     
     let insertCatalogItem (event: EventEnvelope<Event>) (catalogItem:CatalogItemCreation) =
         let (AggregateId id ) = event.AggregateId
         let newCatalogItem:CatalogItemDTO = {
-            Id = id
+            Id = ObjectId.Parse(id.ToString())
             Name = catalogItem.Name
             Description = catalogItem.Description
             Price = 0.0m
-            PictureFileName = None
-            PictureUri = None
-            CatalogType = {
-                Id = catalogItem.CatalogTypeId
-                Type = "TODO"
-            }
-            CatalogBrand = {
-                Id = catalogItem.CatalogBrandId
-                Brand = "TODO"
-            }
+            PictureFileName = ""
+            PictureUri = ""
+            CatalogTypeId = catalogItem.CatalogTypeId
+            CatalogBrandId = catalogItem.CatalogBrandId
             AvailableStock  = 0.0m
-            ReStockThreshold  = 0.0m
+            RestockThreshold  = 0.0m
             MaxStockThreshold = 0.0m
             OnReorder = false
             LastEventNumber = 666 //?
         }
         try
-            catalogItemsCollection.InsertOne(newCatalogItem)
-            ok event
-        with ex -> Bad [ Error ex.Message :> IError ]
+            let options = InsertOneOptions()
+            async {
+                do! connection
+                    |> Query.insertOne CancellationToken.None options newCatalogItem
+                return (ok event)
+            }
+            
+        with ex -> async { return Bad [ Error ex.Message :> IError ] }
     
     let doUpdate (event:EventEnvelope<Event>) update =
         let (AggregateId id) = event.AggregateId
         try
-            let filter = Builders<CatalogItemDTO>.Filter.Eq((fun ci -> ci.Id), id)
-            catalogItemsCollection.UpdateOne(filter, update) |> ignore
-            ok event
+            let idFilter = ObjectId.Parse(id.ToString())
+            let filterEq = Filter.eq (fun (o: CatalogItemDTO) -> o.Id ) idFilter
+            let options = FindOneAndUpdateOptions<CatalogItemDTO>()
+            async {
+                do! connection
+                    |> Query.update CancellationToken.None options update filterEq
+                    |> Async.Ignore
+
+                return ok event
+            }
         with ex -> 
-            Bad [Error ex.Message :> IError ]
+            async { return Bad [Error ex.Message :> IError ] }
 
     let setPrice event price =
         let update = Builders<CatalogItemDTO>.Update.Set((fun x -> x.Price), price)
         doUpdate event update
 
     let setPicture event fileName uri =
-        let update = Builders<CatalogItemDTO>.Update.Set((fun x -> x.PictureUri), Some uri).Set((fun x -> x.PictureFileName), Some fileName)
+        let update = Builders<CatalogItemDTO>.Update.Set((fun x -> x.PictureUri), uri).Set((fun x -> x.PictureFileName), fileName)
         doUpdate event update
       
     let setStockSettings event reStock maxStock =
-        let update = Builders<CatalogItemDTO>.Update.Set((fun x -> x.ReStockThreshold), reStock).Set((fun x -> x.MaxStockThreshold), maxStock)
+        let update = Builders<CatalogItemDTO>.Update.Set((fun x -> x.RestockThreshold), reStock).Set((fun x -> x.MaxStockThreshold), maxStock)
         doUpdate event update
 
     let setStock event stock =
@@ -122,29 +143,46 @@ module private DataAccess =
     let deleteCatalogItem (event:EventEnvelope<Event>) =
         let (AggregateId id) = event.AggregateId
         try
-            catalogItemsCollection.DeleteOne(fun ci -> ci.Id = id) |> ignore
-            ok event
-        with ex -> Bad [Error ex.Message :> IError ]
+            async {
+                let options = DeleteOptions()
+                let idFilter = ObjectId.Parse(id.ToString())
+                let filterEq = Filter.eq(fun (o:CatalogItemDTO) -> o.Id) idFilter
+                do! connection
+                    |> Query.deleteMany CancellationToken.None options filterEq
+                    |> Async.Ignore
+
+                return ok event
+            }
+        with ex -> async { return Bad [Error ex.Message :> IError ] }
 
     let loadCatalogItems () = 
-        catalogItemsCollection.Find(Builders.Filter.Empty).ToEnumerable()
+        connection
+        |> Query.getAll CancellationToken.None (FindOptions<CatalogItemDTO>())
 
     let loadCatalogItemById id = 
-        catalogItemsCollection.Find(fun ci -> ci.Id = id).ToEnumerable()
+        connection
+        |> Query.filter CancellationToken.None (FindOptions<CatalogItemDTO>()) (Filter.eq (fun (o:CatalogItemDTO) -> o.Id) id)
 
     let loadCatalogItemsByDescription description = 
-        catalogItemsCollection.Find(fun ci -> ci.Description = description).ToEnumerable()
+        connection
+        |> Query.filter CancellationToken.None (FindOptions<CatalogItemDTO>()) (Filter.eq (fun (o:CatalogItemDTO) -> o.Description) description)
 
     let loadCatalogItemsByTypeAndBrand typeId brandId = 
-        catalogItemsCollection.Find(fun ci -> ci.CatalogBrand.Id = brandId && ci.CatalogType.Id = typeId).ToEnumerable()
+        connection
+        |> Query.filter CancellationToken.None (FindOptions<CatalogItemDTO>()) ((Filter.eq (fun (o:CatalogItemDTO) -> o.CatalogBrandId) brandId) &&& (Filter.eq (fun (o:CatalogItemDTO) -> o.CatalogTypeId) typeId) )
 
     let loadCatalogItemsByType typeId = 
-        catalogItemsCollection.Find(fun ci -> ci.CatalogType.Id = typeId).ToEnumerable()
+        connection
+        |> Query.filter CancellationToken.None (FindOptions<CatalogItemDTO>()) (Filter.eq (fun (o:CatalogItemDTO) -> o.CatalogTypeId) typeId) 
 
     let loadCatalogItemsByBrand brandId = 
-        catalogItemsCollection.Find(fun ci -> ci.CatalogBrand.Id = brandId).ToEnumerable()
+        connection
+        |> Query.filter CancellationToken.None (FindOptions<CatalogItemDTO>()) (Filter.eq (fun (o:CatalogItemDTO) -> o.CatalogBrandId) brandId)
+
 
 module Writer = 
+    open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.Utils.ChessieFn
+
     module private Helpers =
         let handler (event: EventEnvelope<Event>) =
             match event.Payload with
@@ -156,28 +194,37 @@ module Writer =
             | OnReorderSet -> DataAccess.setOnReorder event true
             | NotReorderSet -> DataAccess.setOnReorder event false
             | CatalogItemDeleted _ -> DataAccess.deleteCatalogItem event
-            | _ -> Ok(event, [Error "Skipped" :> IError])
+            | _ -> async { return Ok(event, [Error "Skipped" :> IError]) }
 
     let handleEvents() =
-        let events = DataAccess.loadLastEvent() >>= Events.loadTypeEvents catelogItemCategory
-        Seq.map Helpers.handler <!> events
+        async {
+            let! m = DataAccess.loadLastEvent()
+            let! result = bind (Events.loadTypeEvents catelogItemCategory) m
+            return Seq.map Helpers.handler <!> result
+        }
 
 module Reader =
-    let getCatalogItems() = DataAccess.loadCatalogItems() |> Seq.toList
+    let getCatalogItems() = DataAccess.loadCatalogItems() 
 
-    let listResultToOption result =
-        match result |> Seq.toList with
-        | [] -> Option.None
-        | xs -> xs |> Option.Some 
+    let listResultToOption (result:Async<'a System.Collections.Generic.List>) =
+        async {
+            let! r = result
+            return match (r |> List.ofSeq) with
+                    | [] -> Option.None
+                    | xs -> xs |> Option.Some 
+        }
 
-    let getCatalogItemById id = 
-        let result = DataAccess.loadCatalogItemById id |> Seq.toList
-        match result with
-        | [] -> Option.None
-        | xs -> 
-            xs
-            |> Seq.head
-            |> Option.Some 
+    let getCatalogItemById (id:Guid) = 
+        async {
+            let idFilter = ObjectId.Parse(id.ToString())
+            let! result = DataAccess.loadCatalogItemById idFilter 
+            return match (result |> List.ofSeq) with
+                    | [] -> Option.None
+                    | xs -> 
+                        xs
+                        |> Seq.head
+                        |> Option.Some 
+        }
 
     let getCatalogItemsByDescription = 
         DataAccess.loadCatalogItemsByDescription >> listResultToOption

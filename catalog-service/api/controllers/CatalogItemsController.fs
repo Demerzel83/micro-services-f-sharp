@@ -22,7 +22,7 @@ module CatalogItemsController =
             let envelope = createCommand id (versionNumber, None, None, None) cmd
 
             let list = [(catalogItemQueueName,envelope)]
-            let result = queueCommands (List.ofSeq list)
+            let! result = queueCommands (List.ofSeq list)
 
             return! 
                 (match result with
@@ -45,7 +45,7 @@ module CatalogItemsController =
             route "/items" >=> authorize >=>
               fun next context ->
                 task {
-                      let result = Reader.getCatalogItems() 
+                      let! result = Reader.getCatalogItems() 
 
                       return! json result next context
                   }
@@ -53,14 +53,14 @@ module CatalogItemsController =
             routef "/items/%s" (fun id ->
                 authorize >=> fun next context ->
                           task {
-                              let result = Reader.getCatalogItemById (Guid.Parse id) 
+                              let! result = Reader.getCatalogItemById (Guid.Parse id) 
                               return! processReadRequest result next context
                           }
             )
             routef "/items/withdescription/%s" (fun description ->
               authorize >=> fun next context ->
                   task {
-                      let result = Reader.getCatalogItemsByDescription description
+                      let! result = Reader.getCatalogItemsByDescription description
 
                       return! processReadRequest result next context
                   }
@@ -68,7 +68,7 @@ module CatalogItemsController =
             routef "/items/type/%s/brand/%s" (fun (catalogTypeId, catalogBrandId) ->
               authorize >=> fun next context ->
                   task {
-                      let result = Reader.getCatalogItemsByTypeAndBrand (Guid.Parse catalogTypeId) (Guid.Parse catalogBrandId) 
+                      let! result = Reader.getCatalogItemsByTypeAndBrand (Guid.Parse catalogTypeId) (Guid.Parse catalogBrandId) 
 
                       return! processReadRequest result next context
                   }
@@ -76,7 +76,7 @@ module CatalogItemsController =
             routef "/items/type/all/brand/%s" (fun catalogBrandId ->
               authorize >=> fun next context ->
                   task {
-                      let result = Reader.getCatalogItemsByBrand (Guid.Parse catalogBrandId) 
+                      let! result = Reader.getCatalogItemsByBrand (Guid.Parse catalogBrandId) 
 
                       return! processReadRequest result next context
                   }
@@ -84,7 +84,7 @@ module CatalogItemsController =
             routef "/items/brand/all/type/%s" (fun typeId -> 
                 authorize >=> fun next context ->
                     task {
-                        let result = Reader.getCatalogItemsByType (Guid.Parse typeId) 
+                        let! result = Reader.getCatalogItemsByType (Guid.Parse typeId) 
                         
                         return! processReadRequest result next context
                     }

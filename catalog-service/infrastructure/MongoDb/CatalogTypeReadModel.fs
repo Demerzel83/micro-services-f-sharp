@@ -84,7 +84,10 @@ module private DataAccess =
                          Type = p.Type } 
         }
 
+
 module Writer = 
+    open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.Utils.ChessieFn
+
     module private Helpers =
         let handler (event: EventEnvelope<Event>) =
             match event.Payload with
@@ -94,8 +97,11 @@ module Writer =
             | _ -> Ok(event, [Error "Skipped" :> IError])
 
     let handleEvents() =
-        let events = DataAccess.loadLastEvent() >>= Events.loadTypeEvents catelogTypeCategory
-        Seq.map Helpers.handler <!> events
+        async {
+            let events = DataAccess.loadLastEvent() 
+            let! result = bind (Events.loadTypeEvents catelogTypeCategory) events
+            return Seq.map Helpers.handler <!> result
+        }
 
 module Reader =
     let getCatalogTypes() = DataAccess.loadCatalogTypes() |> Seq.toList

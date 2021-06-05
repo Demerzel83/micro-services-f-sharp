@@ -8,31 +8,38 @@ open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.MongoDb.ReadMod
 
 [<EntryPoint>]
 let main argv =
-    printfn "[INFO] Catalog Brand Listener started"
-    let rec loop() =
-        let eventList = CatalogBrandCommandHanlder.processCommandQueue()
+    async {
+        printfn "[INFO] Catalog Brand Listener started"
+        let rec loop() =
+            let eventList = CatalogBrandCommandHanlder.processCommandQueue()
         
-        let res =
-            match eventList with
-            | Ok(r,_ )->
-                r
-                |> Seq.iter (fun r' -> 
-                             match r' with
-                             | Ok(r'', _) -> Seq.iter(fun r''' -> printfn "%A" r''') r''
-                             | Bad f -> printfn "%A" f)
-            | Bad f -> printfn "%A" f
+            let res =
+                match eventList with
+                | Ok(r,_ )->
+                    r
+                    |> Seq.iter (fun r' -> 
+                                 match r' with
+                                 | Ok(r'', _) -> Seq.iter(fun r''' -> printfn "%A" r''') r''
+                                 | Bad f -> printfn "%A" f)
+                | Bad f -> printfn "%A" f
+            async {
+                let! eventRes = Writer.handleEvents ()
+                let _ =
+                    match eventRes with
+                    | Ok(r,_) ->
+                        r
+                        |> Seq.map(fun r' ->
+                                        async {
+                                            let! t = r'
+                                            match t with
+                                            | Ok(r'',_) -> printfn "%A" r''
+                                            | Bad f -> printfn "%A" f
+                                        })
 
-        let eventRes = Writer.handleEvents ()
-        let res2 =
-            match eventRes with
-            | Ok(r,_) ->
-                r
-                |> Seq.iter(fun r' ->
-                            match r' with
-                            | Ok(r'',_) -> printfn "%A" r''
-                            | Bad f -> printfn "%A" f)
-            | Bad f -> printfn "%A" f
+                    | Bad f -> [ async { printfn "%A" f } ] |> Seq.ofList
 
-        System.Threading.Thread.Sleep(300)
-        loop()
-    loop()
+                System.Threading.Thread.Sleep(300)
+                return! loop()
+            }
+        return! loop()
+    }|> Async.RunSynchronously

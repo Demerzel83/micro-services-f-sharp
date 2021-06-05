@@ -5,9 +5,11 @@ open System
 open Chessie.ErrorHandling
 open Newtonsoft.Json
 open MongoDB.Driver
-open FSharp.Configuration
+//open FSharp.Configuration
 open MongoDB.Bson
-
+open BagnoDB
+open Microsoft.FSharp.Control
+open System.Threading
 
 type DataAccessError =
     | DataAccessError of string
@@ -40,7 +42,7 @@ module private DataAccess =
         Id: int
         PayloadType : string
         ProcessId : Guid option
-        EventNumber : int
+        //EventNumber : int
     }
 
     type CommandDto = {
@@ -56,11 +58,21 @@ module private DataAccess =
         QueueName: string
     }
 
-    let client = MongoClient(ConnectionString)
-    let db = client.GetDatabase(DbName)
-    let eventsCollection = db.GetCollection<EventDto>(EventsCollectionName)
-    let commandsCollection = db.GetCollection<CommandDto>(CommandsCollectionName)
+    //let client = MongoClient(ConnectionString)
+    //let db = client.GetDatabase(DbName)
+    //let eventsCollection = db.GetCollection<EventDto>(EventsCollectionName)
+    //let commandsCollection = db.GetCollection<CommandDto>(CommandsCollectionName)
+    let collection = "CatalogItems"
+    let database = "CatalogItems"
+    
+    let config = {
+      host = "127.0.0.1"
+      port = 27017
+      user = None
+      password = None
+    }
 
+    
     
     let entityToEvent<'TEvent when 'TEvent :> IEvent>(e: EventDto) =
         let pid =
@@ -68,7 +80,8 @@ module private DataAccess =
             | Some p -> Some (ProcessId p)
             | None -> None
     
-        { EventNumber = e.EventNumber
+        { 
+          EventNumber = e.Id
           EventId = EventId e.EventId
           AggregateId = AggregateId e.AggregateId
           CausationId = CausationId e.CausationId
@@ -120,7 +133,7 @@ module private DataAccess =
             Id = 666 // todo
             PayloadType = typeName
             ProcessId = processIdToGuid e.ProcessId
-            EventNumber = e.EventNumber
+            //EventNumber = e.EventNumber
         }
         event
     
@@ -150,94 +163,171 @@ module private DataAccess =
     
     let commitEvents category events =
         let entities = List.map (eventToEntity category) events
-        eventsCollection.InsertMany(entities)
-        List.map entityToEvent entities
-    
+        //eventsCollection.InsertMany(entities)
+        let options = InsertManyOptions()
+        async {
+            do! Connection.host config
+                |> Connection.database database
+                |> Connection.collection collection
+                |> Query.insertMany CancellationToken.None options entities 
+        
+            return List.map entityToEvent entities
+        }
+        
+    let connection = 
+        Connection.host config
+        |> Connection.database database
+        |> Connection.collection collection
+
     let loadEvents number =
-        let filter = Builders<EventDto>.Filter.Gt((fun ci -> ci.EventNumber), number)
-        eventsCollection.Find(filter).ToEnumerable()
+        //let filter = Builders<EventDto>.Filter.Gt((fun ci -> ci.EventNumber), number)
+        //eventsCollection.Find(filter).ToEnumerable()
+        let filterGt = Filter.gt (fun (o: EventDto) -> o.Id) number
+        let filterOpt = FindOptions<EventDto>()
+        connection
+        |> Query.filter CancellationToken.None filterOpt filterGt
     
-    let loadTypeEvents (Category category) fromNumber =
-        let filterGt = Builders<EventDto>.Filter.Gt((fun ci -> ci.EventNumber), fromNumber)
-        let filterEq = Builders<EventDto>.Filter.Eq((fun ci -> ci.Category), category)
-        let filter = Builders<EventDto>.Filter.And(filterGt, filterEq)
-        eventsCollection.Find(filter).ToEnumerable()
+    let loadTypeEvents (Category category) (fromNumber:int) =
+        //let filterGt = Builders<EventDto>.Filter.Gt((fun ci -> ci.EventNumber), fromNumber)
+        //let filterEq = Builders<EventDto>.Filter.Eq((fun ci -> ci.Category), category)
+        //let filter = Builders<EventDto>.Filter.And(filterGt, filterEq)
+        //eventsCollection.Find(filter).ToEnumerable()
+        let filterGt = Filter.gt (fun (o: EventDto) -> o.Id) fromNumber
+        let filterEq = Filter.eq(fun (o:EventDto) -> o.Category) category
+        let filter =  filterGt &&& filterEq
+        let filterOpt = FindOptions<EventDto>()
+        //async {
+            //let! result =
+        connection
+        |> Query.filter CancellationToken.None filterOpt filter
+            //return result
+        //} |> Async.StartAsTask
     
     let loadAggregateEvents category fromNumber (AggregateId aggregateId) =
-        let filterGt = Builders<EventDto>.Filter.Gt((fun ci -> ci.EventNumber), fromNumber)
-        let filterEq = Builders<EventDto>.Filter.Eq((fun ci -> ci.Category), category)
-        let filterEq2 = Builders<EventDto>.Filter.Eq((fun ci -> ci.AggregateId), aggregateId)
-        let filter = Builders<EventDto>.Filter.And(filterGt, filterEq, filterEq2)
-        eventsCollection.Find(filter).ToEnumerable()
+        //let filterGt = Builders<EventDto>.Filter.Gt((fun ci -> ci.EventNumber), fromNumber)
+        //let filterEq = Builders<EventDto>.Filter.Eq((fun ci -> ci.Category), category)
+        //let filterEq2 = Builders<EventDto>.Filter.Eq((fun ci -> ci.AggregateId), aggregateId)
+        //let filter = Builders<EventDto>.Filter.And(filterGt, filterEq, filterEq2)
+        let filterGt = Filter.gt (fun (o: EventDto) -> o.Id) fromNumber
+        let filterEq = Filter.eq(fun (o:EventDto) -> o.Category) category
+        let filterEq2 = Filter.eq(fun (o:EventDto) -> o.AggregateId) aggregateId
+        let filter = filterGt &&& filterEq &&& filterEq2
+        let filterOpt = FindOptions<EventDto>()
+        connection
+        |> Query.filter CancellationToken.None filterOpt filter
+        //eventsCollection.Find(filter).ToEnumerable()
     
     let loadProcessEvents fromNumber toNumber (ProcessId processId) =
-        let filterGt = Builders<EventDto>.Filter.Gt((fun ci -> ci.EventNumber), fromNumber)
-        let filterEq = Builders<EventDto>.Filter.Lte((fun ci -> ci.EventNumber), fromNumber)
-        let filterEq2 = Builders<EventDto>.Filter.Eq((fun ci -> ci.ProcessId), Some processId)
-        let filter = Builders<EventDto>.Filter.And(filterGt, filterEq, filterEq2)
-        eventsCollection.Find(filter).ToEnumerable()
+        //let filterGt = Builders<EventDto>.Filter.Gt((fun ci -> ci.EventNumber), fromNumber)
+        //let filterEq = Builders<EventDto>.Filter.Lte((fun ci -> ci.EventNumber), fromNumber)
+        //let filterEq2 = Builders<EventDto>.Filter.Eq((fun ci -> ci.ProcessId), Some processId)
+        //let filter = Builders<EventDto>.Filter.And(filterGt, filterEq, filterEq2)
+        //eventsCollection.Find(filter).ToEnumerable()
+        let filterGt = Filter.gt (fun (o: EventDto) -> o.Id) fromNumber
+        let filterEq = Filter.lte(fun (o:EventDto) -> o.Id) toNumber
+        let filterEq2 = Filter.eq(fun (o:EventDto) -> o.ProcessId) (Some processId)
+        let filter = filterGt &&& filterEq &&& filterEq2
+        let filterOpt = FindOptions<EventDto>()
+        connection
+        |> Query.filter CancellationToken.None filterOpt filter
     
     let queueCommands commands = 
         let entities = List.map (fun (queueName, c) -> commandToEntity queueName c) commands
-        commandsCollection.InsertMany(entities)
-        List.map entityToCommand entities
+        //commandsCollection.InsertMany(entities)
+        let options = InsertManyOptions()
+        async {
+            do! connection
+                |> Query.insertMany CancellationToken.None options entities 
+              
+            return List.map entityToCommand entities
+        }
+        
     
     let dequeueCommands (QueueName queueName) = 
-        let filterEq = Builders<CommandDto>.Filter.Eq((fun ci -> ci.QueueName), queueName)
-        let commands = commandsCollection.Find(filterEq).ToEnumerable()
-        commandsCollection.DeleteMany(filterEq) |> ignore
-        commands
+        //let filterEq = Builders<CommandDto>.Filter.Eq((fun ci -> ci.QueueName), queueName)
+        //let filterEq = Filter.eq(fun (o:CommandDto) -> o.QueueName) queueName
+        let filterEq = Filter.eq(fun (o:CommandDto) -> o.QueueName) queueName
+        //let commands = commandsCollection.Find(filterEq).ToEnumerable()
+        let filterOpt = FindOptions<CommandDto>()
+        async {
+            let! commands = 
+                Connection.host config
+                |> Connection.database database
+                |> Connection.collection "Commands"
+                |> Query.filter CancellationToken.None filterOpt filterEq
+            //commandsCollection.DeleteMany(filterEq) |> ignore
+            let options = DeleteOptions()
+            do! Connection.host config
+                |> Connection.database database
+                |> Connection.collection "Commands"
+                |> Query.deleteMany CancellationToken.None options filterEq
+                |> Async.Ignore
+
+            return commands
+        }
+        //commands
     
 module Events =
-    let commitEvents<'TEvent when 'TEvent :> IEvent> category (events : EventEnvelope<'TEvent> list) : Result<EventEnvelope<'TEvent> list, IError> =
+    let commitEvents<'TEvent when 'TEvent :> IEvent> category (events : EventEnvelope<'TEvent> list) : Async<Result<EventEnvelope<'TEvent> list, IError>> =
         try
-            DataAccess.commitEvents category events |> ok
-        with ex -> Bad [DataAccessError ex.Message :> IError ]
+            async {
+                let! result = DataAccess.commitEvents category events 
+                return (ok result) 
+            
+            } 
+        with ex -> async { return (Bad [DataAccessError ex.Message :> IError ]) } 
     
-    let loadAllEvents number : Result<EventEnvelope<IEvent> list, IError> =
+    let loadAllEvents number : Async<Result<EventEnvelope<IEvent> list, IError>> =
         try
-            DataAccess.loadEvents number
-            |> Seq.toList
-            |> List.map DataAccess.entityToEvent
-            |> ok
-        with ex -> Bad [DataAccessError ex.Message :> IError ]
+            async {
+                let! events = DataAccess.loadEvents number
+                let result = events |> List.ofSeq |> List.map DataAccess.entityToEvent
+                return (ok result)
+            } 
+        with ex -> async { return Bad [DataAccessError ex.Message :> IError ] } 
     
-    let loadTypeEvents category number : Result<EventEnvelope<'TEvent> list, IError> =
+    let loadTypeEvents category number : Async<Result<EventEnvelope<'TEvent> list, IError>> =
         try
-            DataAccess.loadTypeEvents category number
-            |> Seq.toList
-            |> List.map DataAccess.entityToEvent
-            |> ok
-        with ex -> Bad [DataAccessError ex.Message :> IError ]
+            async {
+                let! typeEvents = DataAccess.loadTypeEvents category number
+                let result = typeEvents |> List.ofSeq |> List.map DataAccess.entityToEvent
+                return (ok result)
+            } 
+        with ex -> async { return (Bad [DataAccessError ex.Message :> IError ])} 
     
-    let loadAggregateEvents category number aggregateId : Result<EventEnvelope<'TEvent> list, IError> =
+    let loadAggregateEvents category number aggregateId : Async<Result<EventEnvelope<'TEvent> list, IError>> =
         try
-            DataAccess.loadAggregateEvents category number aggregateId
-            |> Seq.toList
-            |> List.map DataAccess.entityToEvent
-            |> ok
-        with ex -> Bad [ DataAccessError ex.Message :> IError ]
+            async {
+                let! events = DataAccess.loadAggregateEvents category number aggregateId
+                let result = events |> List.ofSeq |> List.map DataAccess.entityToEvent
+                return (ok result)
+            } 
+        with ex -> async { return (Bad [ DataAccessError ex.Message :> IError ] )} 
     
     let loadProcessEvents fromNumber toNumber processId =
         try
-            DataAccess.loadProcessEvents fromNumber toNumber processId
-            |> Seq.toList
-            |> List.map DataAccess.entityToEvent
-            |> ok
-        with ex -> Bad [ DataAccessError ex.Message :> IError ]
+            async {
+                let! events = DataAccess.loadProcessEvents fromNumber toNumber processId
+                let result = events  |> List.ofSeq|> List.map DataAccess.entityToEvent
+                return (ok result)
+            } 
+        with ex -> async { return (Bad [ DataAccessError ex.Message :> IError ]) } 
     
 module Commands =
-    let queueCommands<'TCommand when 'TCommand :> ICommand> (commands: (QueueName * CommandEnvelope<'TCommand>)list): Result<CommandEnvelope<'TCommand> list, IError> =
+    let queueCommands<'TCommand when 'TCommand :> ICommand> (commands: (QueueName * CommandEnvelope<'TCommand>)list): Async<Result<CommandEnvelope<'TCommand> list, IError>> =
         try
-            DataAccess.queueCommands commands 
-            |> ok
-        with ex -> Bad [ DataAccessError ex.Message :> IError ]
+            async {
+                let! result = DataAccess.queueCommands commands 
+                return (ok result)
+            } 
+        with ex -> async { return (Bad [ DataAccessError ex.Message :> IError ]) } 
     
-    let dequeueCommands<'TCommand when 'TCommand :> ICommand> queueName : Result<CommandEnvelope<'TCommand> list, IError> =
+    let dequeueCommands<'TCommand when 'TCommand :> ICommand> queueName : Async<Result<CommandEnvelope<'TCommand> list, IError>> =
         try
-            DataAccess.dequeueCommands queueName
-            |> Seq.toList
-            |> List.map DataAccess.entityToCommand
-            |> ok
-        with ex -> Bad [ DataAccessError ex.Message :> IError ]
+            async {
+                let! commands = DataAccess.dequeueCommands queueName
+                let result = commands |> List.ofSeq |> List.map DataAccess.entityToCommand
+                return (ok result)
+            } 
+        with ex -> async { return (Bad [ DataAccessError ex.Message :> IError ])} 
     

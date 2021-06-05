@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>api_gateway_poc</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Http.fs" />
+    <Compile Include="GitHub.fs" />
+    <Compile Include="ObservableExtensions.fs" />
+    <Compile Include="Profile.fs" />
+    <Compile Include="ApiGateway.fs" />
+    <Compile Include="Program.fs" />
+    <Content Include="user.json" />
+    <Content Include="repos.json" />
+    <Content Include="App.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FSharp.Control.Reactive" Version="5.0.2" />
+    <PackageReference Include="FSharp.Data" Version="4.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Suave" Version="2.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="5.0.1" />
+  </ItemGroup>
+
+</Project>

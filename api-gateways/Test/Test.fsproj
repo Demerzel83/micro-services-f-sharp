@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="FSharp.Control.Reactive" Version="5.0.2" />
-    <PackageReference Include="FSharp.Data" Version="4.0.1" />
+    <PackageReference Include="FSharp.Data" Version="4.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>

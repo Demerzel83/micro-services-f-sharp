@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ChessieFn.fs" />
     <None Include="App.config" />
     <Compile Include="MongoDb\Mongodb.fs" />
     <Compile Include="MongoDb\ReadModel.fs" />
@@ -24,12 +25,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BagnoDB" Version="0.0.10" />
+    <PackageReference Include="BagnoDB.Serializator" Version="0.0.10" />
     <PackageReference Include="Chessie" Version="0.6.0" />
-    <PackageReference Include="Dapper" Version="2.0.78" />
-    <PackageReference Include="FSharp.Configuration" Version="1.5.0" />
+    <PackageReference Include="Dapper" Version="2.0.90" />
     <PackageReference Include="FSharp.Data.SqlClient" Version="2.0.7" />
-    <PackageReference Include="MongoDB.Driver" Version="2.12.1" />
-    <PackageReference Include="MongoDB.FSharp" Version="0.1.0" />
+    <PackageReference Include="FSharpPlus" Version="1.1.7" />
+    <PackageReference Include="MongoDB.Driver" Version="2.12.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="SQLProvider" Version="1.2.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />

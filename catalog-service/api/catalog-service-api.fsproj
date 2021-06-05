@@ -10,12 +10,12 @@
 
   <ItemGroup>
     <PackageReference Include="Chessie" Version="0.6.0" />
-    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="Dapper" Version="2.0.90" />
     <PackageReference Include="FSharp.Data.SqlClient" Version="2.0.7" />
     <PackageReference Include="FSharpPlus" Version="1.1.7" />
     <PackageReference Include="Giraffe" Version="4.1.*" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.11" />
-    <PackageReference Include="Polly" Version="7.2.1" />
+    <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="SQLProvider" Version="1.2.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
     <PackageReference Include="TaskBuilder.fs" Version="2.1.*" />

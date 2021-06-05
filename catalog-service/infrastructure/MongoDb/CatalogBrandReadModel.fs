@@ -92,6 +92,8 @@ module private DataAccess =
     let loadCatalogBrandsByName name = queryAll (fun p -> p.Brand = name)
 
 module Writer = 
+   open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.Utils.ChessieFn
+
     module private Helpers =
         let handler (event: EventEnvelope<Event>) =
             match event.Payload with
@@ -101,8 +103,13 @@ module Writer =
             | _ -> Ok(event, [Error "Skipped" :> IError])
 
     let handleEvents() =
-        let events = DataAccess.loadLastEvent() >>= Events.loadTypeEvents catelogBrandCategory
-        Seq.map Helpers.handler <!> events
+        let m = DataAccess.loadLastEvent() 
+        let f = Events.loadTypeEvents catelogBrandCategory
+        
+        async {
+            let! events = bind f m
+            return Seq.map Helpers.handler <!> events
+        }
 
 module Reader =
     let listResultToOption (result:Linq.IQueryable<CatalogBrandDTO>) =

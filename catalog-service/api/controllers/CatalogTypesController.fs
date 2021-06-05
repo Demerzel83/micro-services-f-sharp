@@ -58,7 +58,7 @@ module CatalogTypesController =
                         let envelope = createCommand id (versionNumber, None, None, None) cmd
 
                         let list = [(catalogTypeQueueName,envelope)]
-                        let result = queueCommands (List.ofSeq list)
+                        let! result = queueCommands (List.ofSeq list)
 
                         return! 
                             (match result with
@@ -76,7 +76,7 @@ module CatalogTypesController =
                     let envelope = createCommand id (versionNumber, None, None, None) cmd
 
                     let list = [(catalogTypeQueueName,envelope)]
-                    let result = queueCommands (List.ofSeq list)
+                    let! result = queueCommands (List.ofSeq list)
 
                     return! 
                         (match result with
@@ -97,7 +97,7 @@ module CatalogTypesController =
                         let envelope = createCommand id (versionNumber, None, None, None) cmd
 
                         let list = [(catalogTypeQueueName,envelope)]
-                        let result = queueCommands (List.ofSeq list)
+                        let! result = queueCommands (List.ofSeq list)
 
                         return! 
                             (match result with

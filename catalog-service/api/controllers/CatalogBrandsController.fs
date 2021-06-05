@@ -63,7 +63,7 @@ module CatalogBrandsController =
                         let envelope = createCommand id (versionNumber, None, None, None) cmd
 
                         let list = [(catalogBrandQueueName,envelope)]
-                        let result = queueCommands (List.ofSeq list)
+                        let! result = queueCommands (List.ofSeq list)
 
                         return! 
                             (match result with
@@ -81,7 +81,7 @@ module CatalogBrandsController =
                     let envelope = createCommand id (versionNumber, None, None, None) cmd
 
                     let list = [(catalogBrandQueueName,envelope)]
-                    let result = queueCommands (List.ofSeq list)
+                    let! result = queueCommands (List.ofSeq list)
 
                     return! 
                         (match result with
@@ -102,7 +102,7 @@ module CatalogBrandsController =
                         let envelope = createCommand id (versionNumber, None, None, None) cmd
 
                         let list = [(catalogBrandQueueName,envelope)]
-                        let result = queueCommands (List.ofSeq list)
+                        let! result = queueCommands (List.ofSeq list)
 
                         return! 
                             (match result with
