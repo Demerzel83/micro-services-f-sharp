@@ -12,7 +12,8 @@
     <Compile Include="MongoDb\ReadModel.fs" />
     <Compile Include="MongoDb\CatalogBrandReadModel.fs" />
     <Compile Include="MongoDb\CatalogTypeReadModel.fs" />
-    <None Include="SqlServer\create-database.sql" />
+    <None Include="SqlServer\create-event-database.sql" />
+    <None Include="SqlServer\create-catalog-database.sql" />
     <Compile Include="SqlServer\Dapper.fs" />
     <Compile Include="SqlServer\SqlServer.fs" />
     <Compile Include="SqlServer\CatalogTypeReadModel.fs" />
@@ -42,7 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="5.0.1" />
+    <PackageReference Update="FSharp.Core" Version="6.0.5" />
   </ItemGroup>
 
 </Project>
