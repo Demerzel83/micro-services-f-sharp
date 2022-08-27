@@ -35,3 +35,6 @@ Ankh.NoLoad
 deploy
 yarn-error.log
 .ionide/
+.vs/micro-services-f-sharp/DesignTimeBuild/.dtbcache.v2
+.vs/micro-services-f-sharp/FileContentIndex
+.vs/micro-services-f-sharp/v17

@@ -57,7 +57,7 @@ type Command =
     interface ICommand
 
 type Event =
-    | CatalogItemdCreated of CatalogItemCreation
+    | CatalogItemCreated of CatalogItemCreation
     | PriceChanged of decimal
     | PictureChanged of FileName:string * Uri:string
     | StockThresholdChanged of ReStock:decimal * MaxStock:decimal
@@ -90,7 +90,7 @@ module Handlers =
 
     let applyEvent state event =
             match event with
-            | CatalogItemdCreated item -> 
+            | CatalogItemCreated item -> 
                 let newItem = { state.Item with Name = item.Name; Description = item.Description; CatalogBrand = { state.Item.CatalogBrand with Id = item.CatalogBrandId }; CatalogType = { state.Item.CatalogType with Id = item.CatalogTypeId } }
                 { state with Created = true; Item = newItem}
             | PriceChanged newPrice -> { state with Item = { state.Item with Price = newPrice } }
@@ -135,7 +135,7 @@ module Handlers =
     
     let executeCommand state command = 
             match command with
-            | Create item -> (Validate.canCreate state item) <?> [CatalogItemdCreated item]
+            | Create item -> (Validate.canCreate state item) <?> [CatalogItemCreated item]
             | SetPrice price -> (Validate.canSetPrice state price) <?> [PriceChanged price]
             | SetPicture (fileName, uri) -> (Validate.canSetPicture state (fileName, uri)) <?> [PictureChanged (fileName, uri)]
             | UpdateStockThreshold (reStock, maxStock) -> (Validate.canSetStockThreshold state (reStock, maxStock)) <?> [StockThresholdChanged (reStock, maxStock)]

@@ -4,10 +4,11 @@ open FSharp.Data.Sql
 open System
 open Chessie.ErrorHandling
 open Microsoft.eShopOnContainers.Services.Catalog.Core.Types
+//open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogAggregate
 open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogItemAggregate
 open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer
 
-type CatalogItemDTO = {
+type CatalogDTO = {
     Id : Guid
     Name : string
     Description : string
@@ -26,13 +27,13 @@ module private DataAccess =
     [<Literal>]
     let connectionString = "Server=localhost;Database=Catalog;User=sa;Password=Welcome1$"
 
-    type dbSchema = SqlDataProvider<Common.DatabaseProviderTypes.MSSQLSERVER, connectionString, UseOptionTypes = true   >
+    type dbSchema = SqlDataProvider<Common.DatabaseProviderTypes.MSSQLSERVER, connectionString, UseOptionTypes = Common.NullableColumnType.OPTION>
     let ctx = dbSchema.GetDataContext()
 
     let loadLastEvent() =
         let r =
             query {
-                for ci in ctx.Dbo.CatalogItem do
+                for ci in ctx.Dbo.Catalog do
                     sortByDescending ci.LastEventNumber 
                     take 1
                     select ci.LastEventNumber
@@ -45,21 +46,21 @@ module private DataAccess =
             | _ -> ok (r.Head)
         with ex -> Bad [ Error ex.Message :> IError ]
     
-    let insertCatalogItem (event: EventEnvelope<Event>) (catalogItem:CatalogItemCreation) =
+    let insertCatalog (event: EventEnvelope<Event>) (catalog:CatalogItemCreation) =
         let (AggregateId id ) = event.AggregateId
-        let newCatalogItem = ctx.Dbo.CatalogItem.Create()
-        newCatalogItem.Id <- id
-        newCatalogItem.Name <- catalogItem.Name
-        newCatalogItem.Description <- catalogItem.Description
-        newCatalogItem.Price <- 0.0m
-        newCatalogItem.PictureFileName <- None
-        newCatalogItem.PictureUri <- None
-        newCatalogItem.CatalogTypeId <- catalogItem.CatalogTypeId
-        newCatalogItem.CatalogBrandId <- catalogItem.CatalogBrandId
-        newCatalogItem.AvailableStock  <- 0.0m
-        newCatalogItem.RestockThreshold  <- 0.0m
-        newCatalogItem.MaxStockThreshold <- 0.0m
-        newCatalogItem.OnReorder <- false
+        let newCatalog = ctx.Dbo.Catalog.Create()
+        newCatalog.Id <- id
+        newCatalog.Name <- catalog.Name
+        newCatalog.Description <- catalog.Description
+        newCatalog.Price <- 0.0m
+        newCatalog.PictureFileName <- None
+        newCatalog.PictureUri <- None
+        newCatalog.CatalogTypeId <- catalog.CatalogTypeId
+        newCatalog.CatalogBrandId <- catalog.CatalogBrandId
+        newCatalog.AvailableStock  <- 0.0m
+        newCatalog.RestockThreshold  <- 0.0m
+        newCatalog.MaxStockThreshold <- 0.0m
+        newCatalog.OnReorder <- false
         try
             ctx.SubmitUpdates()
             ok event
@@ -68,7 +69,7 @@ module private DataAccess =
     let doUpdate (event:EventEnvelope<Event>) update =
         let (AggregateId id) = event.AggregateId
         query {
-            for ci in ctx.Dbo.CatalogItem do
+            for ci in ctx.Dbo.Catalog do
                 where (ci.Id = id)
         }
         |> Seq.toList
@@ -79,36 +80,36 @@ module private DataAccess =
         with ex -> Bad [Error ex.Message :> IError ]
 
     let setPrice event price =
-        let update (ci: dbSchema.dataContext.``dbo.CatalogItemEntity``) =
+        let update (ci: dbSchema.dataContext.``dbo.CatalogEntity``) =
            ci.Price <- price
         doUpdate event update
 
     let setPicture event fileName uri =
-        let update (ci:dbSchema.dataContext.``dbo.CatalogItemEntity``) =
+        let update (ci:dbSchema.dataContext.``dbo.CatalogEntity``) =
             ci.PictureUri <- Some uri
             ci.PictureFileName <- Some fileName
         doUpdate event update
       
     let setStockSettings event reStock maxStock =
-        let update (ci:dbSchema.dataContext.``dbo.CatalogItemEntity``) =
+        let update (ci:dbSchema.dataContext.``dbo.CatalogEntity``) =
             ci.RestockThreshold <- reStock
             ci.MaxStockThreshold <- maxStock
         doUpdate event update
 
     let setStock event stock =
-        let update (ci:dbSchema.dataContext.``dbo.CatalogItemEntity``) =
+        let update (ci:dbSchema.dataContext.``dbo.CatalogEntity``) =
             ci.AvailableStock <- stock
         doUpdate event update
 
     let setOnReorder event onReorder =
-        let update (ci:dbSchema.dataContext.``dbo.CatalogItemEntity``) =
+        let update (ci:dbSchema.dataContext.``dbo.CatalogEntity``) =
             ci.OnReorder <- onReorder
         doUpdate event update
     
-    let deleteCatalogItem (event:EventEnvelope<Event>) =
+    let deleteCatalog (event:EventEnvelope<Event>) =
         let (AggregateId id) = event.AggregateId
         query {
-            for ci in ctx.Dbo.CatalogItem do
+            for ci in ctx.Dbo.Catalog do
                 where (ci.Id = id)
         }
         |> Seq.toList
@@ -118,9 +119,9 @@ module private DataAccess =
             ok event
         with ex -> Bad [Error ex.Message :> IError ]
 
-    let loadCatalogItems () = 
+    let loadCatalogs () = 
         query {
-            for p in ctx.Dbo.CatalogItem do
+            for p in ctx.Dbo.Catalog do
                 join ct in ctx.Dbo.CatalogType 
                     on (p.CatalogTypeId = ct.Id)
                 join cb in ctx.Dbo.CatalogBrand
@@ -139,9 +140,9 @@ module private DataAccess =
                          OnReorder = p.OnReorder } 
         }
 
-    let loadCatalogItemById id = 
+    let loadCatalogById id = 
         query {
-            for p in ctx.Dbo.CatalogItem do
+            for p in ctx.Dbo.Catalog do
                 where (p.Id = id)
                 join ct in ctx.Dbo.CatalogType 
                     on (p.CatalogTypeId = ct.Id)
@@ -161,9 +162,9 @@ module private DataAccess =
                          OnReorder = p.OnReorder } 
         }
 
-    let loadCatalogItemsByDescription description = 
+    let loadCatalogsByDescription description = 
         query {
-            for p in ctx.Dbo.CatalogItem do
+            for p in ctx.Dbo.Catalog do
                 where (p.Description = description)
                 join ct in ctx.Dbo.CatalogType 
                     on (p.CatalogTypeId = ct.Id)
@@ -183,9 +184,9 @@ module private DataAccess =
                          OnReorder = p.OnReorder } 
         }
 
-    let loadCatalogItemsByTypeAndBrand typeId brandId = 
+    let loadCatalogsByTypeAndBrand typeId brandId = 
         query {
-            for p in ctx.Dbo.CatalogItem do
+            for p in ctx.Dbo.Catalog do
                 where (p.CatalogBrandId = brandId && p.CatalogTypeId = typeId)
                 join ct in ctx.Dbo.CatalogType 
                     on (p.CatalogTypeId = ct.Id)
@@ -205,9 +206,9 @@ module private DataAccess =
                          OnReorder = p.OnReorder } 
         }
 
-    let loadCatalogItemsByType typeId = 
+    let loadCatalogsByType typeId = 
         query {
-            for p in ctx.Dbo.CatalogItem do
+            for p in ctx.Dbo.Catalog do
                 where (p.CatalogTypeId = typeId)
                 join ct in ctx.Dbo.CatalogType 
                     on (p.CatalogTypeId = ct.Id)
@@ -227,9 +228,9 @@ module private DataAccess =
                          OnReorder = p.OnReorder } 
         }
 
-    let loadCatalogItemsByBrand brandId = 
+    let loadCatalogsByBrand brandId = 
         query {
-            for p in ctx.Dbo.CatalogItem do
+            for p in ctx.Dbo.Catalog do
                 where (p.CatalogBrandId = brandId)
                 join ct in ctx.Dbo.CatalogType 
                     on (p.CatalogTypeId = ct.Id)
@@ -253,14 +254,14 @@ module Writer =
     module private Helpers =
         let handler (event: EventEnvelope<Event>) =
             match event.Payload with
-            | CatalogItemdCreated catalogItem -> DataAccess.insertCatalogItem event catalogItem
+            | CatalogItemCreated catalog -> DataAccess.insertCatalog event catalog
             | PriceChanged price -> DataAccess.setPrice event price
             | PictureChanged (fileName, uri) -> DataAccess.setPicture event fileName uri
             | StockThresholdChanged (reStock, maxStock) -> DataAccess.setStockSettings event reStock maxStock
             | StockChanged stock -> DataAccess.setStock event stock
             | OnReorderSet -> DataAccess.setOnReorder event true
             | NotReorderSet -> DataAccess.setOnReorder event false
-            | CatalogItemDeleted _ -> DataAccess.deleteCatalogItem event
+            | CatalogItemDeleted _ -> DataAccess.deleteCatalog event
             | _ -> Ok(event, [Error "Skipped" :> IError])
 
     let handleEvents() =
@@ -268,15 +269,15 @@ module Writer =
         Seq.map Helpers.handler <!> events
 
 module Reader =
-    let getCatalogItems() = DataAccess.loadCatalogItems() |> Seq.toList
+    let getCatalogs() = DataAccess.loadCatalogs() |> Seq.toList
 
     let listResultToOption (result:Linq.IQueryable<CatalogItem>) =
         match result |> Seq.toList with
         | [] -> Option.None
         | xs -> xs |> Option.Some 
 
-    let getCatalogItemById id = 
-        let result = DataAccess.loadCatalogItemById id |> Seq.toList 
+    let getCatalogById id = 
+        let result = DataAccess.loadCatalogById id |> Seq.toList 
         match result with
         | [] -> Option.None
         | xs -> 
@@ -284,16 +285,16 @@ module Reader =
             |> Seq.head
             |> Option.Some 
 
-    let getCatalogItemsByDescription = 
-        DataAccess.loadCatalogItemsByDescription >> listResultToOption
+    let getCatalogsByDescription = 
+        DataAccess.loadCatalogsByDescription >> listResultToOption
 
-    let getCatalogItemsByTypeAndBrand typeId brandId =
-        DataAccess.loadCatalogItemsByTypeAndBrand typeId brandId 
+    let getCatalogsByTypeAndBrand typeId brandId =
+        DataAccess.loadCatalogsByTypeAndBrand typeId brandId 
         |> listResultToOption
         
-    let getCatalogItemsByType =
-        DataAccess.loadCatalogItemsByType >> listResultToOption
+    let getCatalogsByType =
+        DataAccess.loadCatalogsByType >> listResultToOption
         
-    let getCatalogItemsByBrand =
-        DataAccess.loadCatalogItemsByBrand >> listResultToOption
+    let getCatalogsByBrand =
+        DataAccess.loadCatalogsByBrand >> listResultToOption
         

@@ -16,7 +16,7 @@ module private DataAccess =
     [<Literal>]
     let connectionString = "Server=localhost;Database=Catalog;User=sa;Password=Welcome1$"
 
-    type dbSchema = SqlDataProvider<Common.DatabaseProviderTypes.MSSQLSERVER, connectionString, UseOptionTypes = true   >
+    type dbSchema = SqlDataProvider<Common.DatabaseProviderTypes.MSSQLSERVER, connectionString, UseOptionTypes = Common.NullableColumnType.OPTION>
     let ctx = dbSchema.GetDataContext()
 
     let loadLastEvent() =

@@ -1,18 +1,18 @@
 version: "3.8"
 volumes:
-  x5:
+  eshop:
     external: true
 services:
-  # sqlserver:
-    # container_name: sqlInDocker
-    # image: mcr.microsoft.com/mssql/server:2019-latest
-    # environment:
-      # - MSSQL_SA_PASSWORD=Welcome1$$
-      # - ACCEPT_EULA=Y
-    # volumes:
-      # - x5:/home/node/app/db/sqlserver
-    # ports:
-      # - "1433:1433"
+    sqlserver:
+        container_name: sqlInDocker
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        environment:
+          - MSSQL_SA_PASSWORD=Welcome1$$
+          - ACCEPT_EULA=Y
+        volumes:
+          - eshop:/home/node/app/db/sqlserver
+        ports:
+          - "1433:1433"
   # rabbitmq:
     # container_name: rabbitInDocker
     # image: rabbitmq:3-management
@@ -20,15 +20,15 @@ services:
       # - RABBITMQ_DEFAULT_USER=guest
       # - RABBITMQ_DEFAULT_PASS=guest
     # volumes:
-      # - x5:/home/node/app/bus/rabbitmq
+      # - eshop:/home/node/app/bus/rabbitmq
     # ports:
       # - "5672:5672"
-  # mongo:
-    # image: mongo
-    # volumes:
-      # - x5:/home/node/app/db/mongo
-    # ports:
-      # - "27017:27017"
+    mongo:
+        image: mongo
+        volumes:
+          - eshop:/home/node/app/db/mongo
+        ports:
+          - "27017:27017"
     # basket-service:
         # build: ./basket-service
         # ports:
@@ -46,14 +46,16 @@ services:
     # basket-listener:
     
     # catalog-db:
-    catalog-api:
-        build:
-            context: ./catalog-service
-            dockerfile: ./dockerfile-api
+    # catalog-api:
+        # build:
+            # context: ./catalog-service
+            # dockerfile: ./dockerfile-api
             
-        ports:
-            - "5002:80"
-            - "5003:80"
+        # ports:
+            # - "5002:80"
+            # - "5003:80"
+        # depends_on:
+            # - sqlserver
     # catalog-brand-listener:
     # catalog-listener:
     # catalog-type-listener:

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30320.27
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32811.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "catalog-listener", "catalog-service\catalog-listener\catalog-listener.fsproj", "{B63A5259-C359-4C38-A448-AC5217CAE559}"
 EndProject
@@ -81,7 +81,7 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "basket-listener", "basket-s
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "api-gateway-poc", "utils\api-gateway-poc\api-gateway-poc.fsproj", "{99EDFE8B-E32B-4FF0-A66A-9CE28AC71FC7}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "custom-types", "utils\custom-types\custom-types.fsproj", "{71E211B2-E829-4B6B-90A7-2AD02C37B3D6}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "custom-types", "utils\custom-types\custom-types.fsproj", "{71E211B2-E829-4B6B-90A7-2AD02C37B3D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -56,6 +56,7 @@ module private DataAccess =
         port = 27017
         user = None
         password = None
+        authDb = None
     }
 
     let connection = 
@@ -186,7 +187,7 @@ module Writer =
     module private Helpers =
         let handler (event: EventEnvelope<Event>) =
             match event.Payload with
-            | CatalogItemdCreated catalogItem -> DataAccess.insertCatalogItem event catalogItem
+            | CatalogItemCreated catalogItem -> DataAccess.insertCatalogItem event catalogItem
             | PriceChanged price -> DataAccess.setPrice event price
             | PictureChanged (fileName, uri) -> DataAccess.setPicture event fileName uri
             | StockThresholdChanged (reStock, maxStock) -> DataAccess.setStockSettings event reStock maxStock

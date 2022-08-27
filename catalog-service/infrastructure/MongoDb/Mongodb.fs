@@ -70,6 +70,7 @@ module private DataAccess =
       port = 27017
       user = None
       password = None
+      authDb = None
     }
 
     

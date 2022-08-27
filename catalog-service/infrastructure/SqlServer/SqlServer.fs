@@ -17,9 +17,9 @@ module private DataAccess =
     //[<Literal>] 
     //let connectionString = AppSettings<"app.config">.ConnectionStrings.SqlConnectionString
     [<Literal>] 
-    let connectionString = "Server=localhost;Database=Catalog;User=sa;Password=Welcome1$"
+    let connectionString = "Server=localhost;Database=Events;User=sa;Password=Welcome1$"
 
-    type dbSchema = SqlDataProvider<Common.DatabaseProviderTypes.MSSQLSERVER, connectionString, UseOptionTypes = true   >
+    type dbSchema = SqlDataProvider<Common.DatabaseProviderTypes.MSSQLSERVER, connectionString, UseOptionTypes = Common.NullableColumnType.OPTION>
 
     let ctx = dbSchema.GetDataContext()
 
