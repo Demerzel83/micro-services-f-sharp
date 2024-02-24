@@ -1,5 +1,7 @@
 namespace Microsoft.eShopOnContainers.Services.Marketing.Api
 
+open Giraffe.ViewEngine
+
 module Program =
 
     open System
@@ -26,7 +28,7 @@ module Program =
     // ---------------------------------
 
     module Views =
-        open GiraffeViewEngine
+        open Giraffe
 
         let layout (content: XmlNode list) =
             html [] [
