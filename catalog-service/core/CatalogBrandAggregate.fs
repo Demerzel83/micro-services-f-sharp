@@ -49,7 +49,7 @@ module Handlers =
             match event with
             | CatalogBrandCreated item -> 
                 let newBrand = { state.Item with Brand = item.Brand }
-                { state with Created = true; Item = newBrand}
+                { state with Created = true; Item = newBrand }
             | BrandUpdated newBrand -> { state with Item = { state.Item with Brand = newBrand } }
             | CatalogBrandDeleted _ -> State.Zero
   

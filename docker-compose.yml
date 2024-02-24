@@ -46,27 +46,28 @@ services:
     # basket-listener:
     
     # catalog-db:
-    # catalog-api:
-        # build:
-            # context: ./catalog-service
-            # dockerfile: ./dockerfile-api
+    catalog-api:
+        build:
+            context: ./catalog-service
+            dockerfile: ./dockerfile-api
             
-        # ports:
-            # - "5002:80"
-            # - "5003:80"
-        # depends_on:
-            # - sqlserver
+        ports:
+            - "5002:80"
+            - "5003:80"
+        depends_on:
+            - sqlserver
+            - identity-listener
     # catalog-brand-listener:
     # catalog-listener:
     # catalog-type-listener:
             
     # identity-db:
     # identity-api:
-    # identity-listener:
-        # build: ./identity-service
-        # ports:
-            # - "5004:80"
-            # - "5005:80"
+    identity-listener:
+        build: ./identity-service/api
+        ports:
+            - "5004:80"
+            - "5005:80"
     
     # location-db:
     # location-listener:

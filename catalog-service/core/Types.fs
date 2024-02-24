@@ -16,6 +16,7 @@
         | Expected of int
         | Irrelevant
     type EventNumber = int
+    // Marker interfaces: https://stackoverflow.com/questions/411709/how-do-you-declare-and-consume-marker-interface-in-f
     type IEvent = interface end
     type ICommand = interface end
     type IError = interface end

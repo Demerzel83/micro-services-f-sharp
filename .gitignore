@@ -38,3 +38,5 @@ yarn-error.log
 .vs/micro-services-f-sharp/DesignTimeBuild/.dtbcache.v2
 .vs/micro-services-f-sharp/FileContentIndex
 .vs/micro-services-f-sharp/v17
+.vs/
+.vs/micro-services-f-sharp/config/applicationhost.config

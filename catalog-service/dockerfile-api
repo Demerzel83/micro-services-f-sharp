@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 
 # build application 
 WORKDIR /src
@@ -6,13 +6,13 @@ COPY . .
 RUN dotnet restore api/catalog-service-api.fsproj
 
 WORKDIR /src/api
-RUN dotnet build catalog-service-api.fsproj
+RUN dotnet build catalog-service-api.fsproj  -c Release
 
 WORKDIR /src/api
-RUN dotnet publish catalog-service-api.fsproj -o /app
+RUN dotnet publish catalog-service-api.fsproj -c Release -o /app
 
 # final stage/image
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
 
 WORKDIR /app
 COPY --from=build /app .
