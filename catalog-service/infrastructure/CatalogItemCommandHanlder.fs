@@ -1,8 +1,8 @@
 ﻿namespace Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.CommandHandler
 
-open Chessie.ErrorHandling
-open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer.EventsDB
 open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogItemAggregate
+open TaskResult
 
 module CatalogItemCommandHanlder = 
     module private Helpers =
@@ -11,4 +11,12 @@ module CatalogItemCommandHanlder =
         let dequeue () = Commands.dequeueCommands catalogItemQueueName
 
     let handler = makeCatalogItemCommandHandler Helpers.load Helpers.commit
-    let processCommandQueue () = Seq.map handler <!> Helpers.dequeue ()
+    let processCommandQueue () = taskResult {
+        let! commands =  Helpers.dequeue ()
+        let! result = Seq.fold(fun acc x -> 
+            taskResult {
+                let! result = handler x
+                let! values = acc
+                return (result @ values) }) (TaskResult.rtn List.empty) commands
+        return result
+    }

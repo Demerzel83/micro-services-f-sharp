@@ -1,9 +1,9 @@
 module Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogTypeAggregate
 
-open Chessie.ErrorHandling
 open Microsoft.eShopOnContainers.Services.Catalog.Core.Commands
 open Microsoft.eShopOnContainers.Services.Catalog.Core.Types
 open System
+open MyResult
 
 let catelogTypeCategory = Category "CatalogType"
 let catalogTypeQueueName = QueueName "CatalogType"
@@ -57,8 +57,8 @@ module Handlers =
             let validate predicate error value =
                 let result = predicate value
                 match result with
-                | false -> ok result
-                | true -> Bad [ValidationError error :> IError]
+                | false -> Ok result
+                | true -> ValidationError error :> IError |> Result.Error
 
 
             module private Helpers =
@@ -73,15 +73,15 @@ module Handlers =
             let canUpdateTypeDescription state typeDescription = Helpers.created state <* Helpers.withTypeDescription typeDescription 
             let canDelete state = Helpers.created state
     
-    let inline (<?>) a b = lift2 (fun _ z -> z) a (ok b)
+    let inline (<?>) a b = lift2 (fun _ z -> z) a (Ok b)
     
     let executeCommand state command = 
             match command with
-            | Create item -> (Validate.canCreate state item) <?> (Validate.canUpdateType state item) <?> [CatalogTypeCreated item]
-            | UpdateType typeDescription -> (Validate.canUpdateTypeDescription state typeDescription) <?> [TypeUpdated typeDescription]
-            | Delete id -> (Validate.canDelete state) <?> [CatalogTypeDeleted id]
+            | Create item -> (Validate.canCreate state item) <?> (Validate.canUpdateType state item) <?> [CatalogTypeCreated item  :> IEvent]
+            | UpdateType typeDescription -> (Validate.canUpdateTypeDescription state typeDescription) <?> [TypeUpdated typeDescription :> IEvent]
+            | Delete id -> (Validate.canDelete state) <?> [(CatalogTypeDeleted id) :> IEvent]
 
 let makeCatalogTypeCommandHandler =
     makeCommandHandler { Zero = Handlers.State.Zero
-                         ApplyEvent = Handlers.applyEvent
-                         ExecuteCommand = Handlers.executeCommand }
+                         ApplyEvent = (fun s e -> Handlers.applyEvent s (e :?> Event))
+                         ExecuteCommand = fun s (c:ICommand) ->  Handlers.executeCommand s (c :?> Command) }

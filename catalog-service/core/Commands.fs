@@ -1,9 +1,10 @@
 ﻿module Microsoft.eShopOnContainers.Services.Catalog.Core.Commands
 
 open System
-open Chessie.ErrorHandling
 open Microsoft.eShopOnContainers.Services.Catalog.Core.Types
 open Microsoft.eShopOnContainers.Services.Catalog.Core.Events
+open TaskResult
+open MyResult   
 
 let createCommand aggregateId (version, causationId, correlationId, processId) payload =
     let commandId = Guid.NewGuid()
@@ -27,26 +28,29 @@ let createCommand aggregateId (version, causationId, correlationId, processId) p
       ExpectedVersion = version }
 
 let makeCommandHandler (aggregate: Aggregate<'TState, 'TCommand, 'TEvent>)
-    (load: AggregateId -> Result<EventEnvelope<'TEvent> list, IError>)
-    (commit: EventEnvelope<'TEvent> list -> Result<EventEnvelope<'TError> list, IError>) =
-    let handleCommand command : Result<EventEnvelope<'TEvent> list, IError> =
-        let processEvents events =
-            let lastEventNumber = List.fold(fun acc e' -> e'.EventNumber) 0 events
-            let e = lastEventNumber
-            let v =
-                match command.ExpectedVersion with
-                | Expected v' -> Some(v')
-                | Irrelevant -> None
+    (load: AggregateId -> TaskResult<EventEnvelope<'TEvent> list, IError>)
+    (commit: EventEnvelope<'TEvent> list -> TaskResult<EventEnvelope<'TError> list, IError>) =
+    let handleCommand command : TaskResult<EventEnvelope<'TEvent> list, IError> = taskResult {
+            let processEvents events : TaskResult<EventEnvelope<'TEvent> list, IError> =
+                let lastEventNumber = List.fold(fun acc e' -> e'.EventNumber) 0 events
+                   
+                match lastEventNumber,command.ExpectedVersion with
+                | (_, Irrelevant) ->  Error "Irrelevant Version" :> IError |> Result.Error   |> MyTask.rtn
+                | (lastEventNumber, Expected y) when lastEventNumber > y -> Error "Version mistmatch" :> IError |> Result.Error  |> MyTask.rtn
+                | _ -> taskResult {
+                        let eventPayloads = List.map (fun (e: EventEnvelope<'TEvent>) -> e.Payload) events
+                        let state = List.fold aggregate.ApplyEvent aggregate.Zero eventPayloads
+                        let! events  = aggregate.ExecuteCommand state command.Payload |> MyTask.rtn :>  TaskResult<IEvent list, IError>
+                        let result2 = events |> List.map (fun e -> createEventMetadata e command) 
+                        let! result3 =  commit result2
+                        return result3
+                    }
+                   
                     
-            match e,v with
-            | (x, Some(y)) when x > y -> Bad [Error "Version mistmatch" :> IError]
-            | _ ->
-                let eventPayloads = List.map (fun (e: EventEnvelope<'TEvent>) -> e.Payload) events
-                let state = List.fold aggregate.ApplyEvent aggregate.Zero eventPayloads
-                let result = aggregate.ExecuteCommand state command.Payload
-                List.map (fun e -> createEventMetadata e command) <!> result >>= commit
         
-        let id = command.AggregateId
-        let loadEvents = load id
-        processEvents <!> loadEvents |> flatten
+            let id = command.AggregateId
+            let loadEvents = load id
+            let! r = TaskResult.bind processEvents loadEvents 
+            return r
+        }
     handleCommand

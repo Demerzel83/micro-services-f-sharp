@@ -22,6 +22,7 @@ let main argv =
       (consumer "2" host exchange "all.*" token)  
       (consumer "3" host exchange "*.even" token)  
     }
+    |> Seq.map(Async.AwaitTask)
     |> Async.Parallel
     |> Async.RunSynchronously |> ignore
   } |> Async.RunSynchronously

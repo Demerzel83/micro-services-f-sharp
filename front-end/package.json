@@ -2,8 +2,8 @@
   "private": true,
   "scripts": {
     "postinstall": "dotnet tool restore",
-    "start": "dotnet fable watch src --run webpack-dev-server",
-    "build": "dotnet fable src && webpack"
+    "start": "dotnet run fable watch src --run webpack-dev-server",
+    "build": "dotnet run fable src && webpack"
   },
   "dependencies": {
     "http-proxy-middleware": "^1.0.6",

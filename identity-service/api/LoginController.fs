@@ -12,7 +12,7 @@ open Microsoft.eShopOnContainers.Services.Identity.API.Model
 open Microsoft.eShopOnContainers.Services.Identity.API.Model.Login
 
 module LoginController =
-    let secret = "spadR2dre#u-ruBrE@TepA&*Uf@U"
+    let secret = "spadR2dre#u-ruBrE@TepA&*Uf@UspadR2dre#u-ruBrE@TepA&*Uf@U"
     let generateToken email =
         let claims = [|
             Claim(JwtRegisteredClaimNames.Sub, email);

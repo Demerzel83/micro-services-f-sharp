@@ -1,9 +1,9 @@
 module Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogItemAggregate
 
-open Chessie.ErrorHandling
 open Microsoft.eShopOnContainers.Services.Catalog.Core.Commands
 open Microsoft.eShopOnContainers.Services.Catalog.Core.Types
 open System
+open MyResult
 
 let catelogItemCategory = Category "CatalogItem"
 let catalogItemQueueName = QueueName "CatalogItem"
@@ -105,8 +105,8 @@ module Handlers =
             let validate predicate error value =
                 let result = predicate value
                 match result with
-                | false -> ok result
-                | true -> Bad [ValidationError error :> IError]
+                | false -> Ok result
+                | true -> ValidationError error :> IError |> Result.Error 
 
 
             module private Helpers =
@@ -131,20 +131,20 @@ module Handlers =
             let canNotOnReorder state = Helpers.created state
             let canDelete state = Helpers.created state
     
-    let inline (<?>) a b = lift2 (fun _ z -> z) a (ok b)
+    let inline (<?>) a b = lift2 (fun _ z -> z) a (Ok b)
     
     let executeCommand state command = 
             match command with
-            | Create item -> (Validate.canCreate state item) <?> [CatalogItemCreated item]
-            | SetPrice price -> (Validate.canSetPrice state price) <?> [PriceChanged price]
-            | SetPicture (fileName, uri) -> (Validate.canSetPicture state (fileName, uri)) <?> [PictureChanged (fileName, uri)]
-            | UpdateStockThreshold (reStock, maxStock) -> (Validate.canSetStockThreshold state (reStock, maxStock)) <?> [StockThresholdChanged (reStock, maxStock)]
-            | SetStock value -> (Validate.canSetStock state value) <?> [StockChanged value]
-            | OnReorder -> (Validate.canOnReorder state) <?> [OnReorderSet]
-            | NotOnReorder -> (Validate.canNotOnReorder state) <?> [NotReorderSet]
-            | Delete id -> (Validate.canDelete state) <?> [CatalogItemDeleted id]
+            | Create item -> (Validate.canCreate state item) <?> [CatalogItemCreated item  :> IEvent]
+            | SetPrice price -> (Validate.canSetPrice state price) <?> [PriceChanged price :> IEvent]
+            | SetPicture (fileName, uri) -> (Validate.canSetPicture state (fileName, uri)) <?> [PictureChanged (fileName, uri) :> IEvent]
+            | UpdateStockThreshold (reStock, maxStock) -> (Validate.canSetStockThreshold state (reStock, maxStock)) <?> [StockThresholdChanged (reStock, maxStock) :> IEvent]
+            | SetStock value -> (Validate.canSetStock state value) <?> [StockChanged value :> IEvent]
+            | OnReorder -> (Validate.canOnReorder state) <?> [OnReorderSet :> IEvent]
+            | NotOnReorder -> (Validate.canNotOnReorder state) <?> [NotReorderSet :> IEvent]
+            | Delete id -> (Validate.canDelete state) <?> [CatalogItemDeleted id :> IEvent]
 
 let makeCatalogItemCommandHandler =
     makeCommandHandler { Zero = Handlers.State.Zero
-                         ApplyEvent = Handlers.applyEvent
-                         ExecuteCommand = Handlers.executeCommand }
+                         ApplyEvent = fun s e -> Handlers.applyEvent s (e :?> Event)
+                         ExecuteCommand = fun s (c:ICommand) ->  Handlers.executeCommand s (c :?> Command) }

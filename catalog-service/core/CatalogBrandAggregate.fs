@@ -1,6 +1,5 @@
 ﻿module Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogBrandAggregate
 
-open Chessie.ErrorHandling
 open Microsoft.eShopOnContainers.Services.Catalog.Core.Commands
 open Microsoft.eShopOnContainers.Services.Catalog.Core.Types
 open System
@@ -13,7 +12,7 @@ type CatalogBrand = {
     Brand: string
   }
 
- type CatalogBrandCreation = {
+type CatalogBrandCreation = {
     Brand : string
  }
 
@@ -57,8 +56,8 @@ module Handlers =
             let validate predicate error value =
                 let result = predicate value
                 match result with
-                | false -> ok result
-                | true -> Bad [ValidationError error :> IError]
+                | false -> Result.Ok result
+                | true -> ValidationError error :> IError |> Result.Error 
 
 
             module private Helpers =
@@ -66,23 +65,23 @@ module Handlers =
                 let withBrand = validate (fun s -> s.Brand = "") "Brand description cannot be empty"
                 let withBrandDescription = validate (fun s -> s = "") "Description cannot be empty"
                 let created = validate (fun s -> not s.Created) "Brand must be created"
-            let inline (<*) a b = lift2 (fun z _ -> z) a b
+            let inline (<*) a b = MyResult.lift2 (fun z _ -> z) a b
         
             let canCreate state item = Helpers.notCreated state  <* Helpers.withBrand item 
             let canUpdateBrand state typeF = Helpers.created state <* Helpers.withBrand typeF 
             let canUpdateBrandDescription state typeDescription = Helpers.created state <* Helpers.withBrandDescription typeDescription 
             let canDelete state = Helpers.created state
     
-    let inline (<?>) a b = lift2 (fun _ z -> z) a (ok b)
+    let inline (<?>) a b = MyResult.lift2 (fun _ z -> z) a (Ok b)
     
     let executeCommand state command = 
             match command with
-            | Create item -> (Validate.canCreate state item) <?> (Validate.canUpdateBrand state item) <?> [CatalogBrandCreated item]
-            | UpdateBrand brandDescription -> (Validate.canUpdateBrandDescription state brandDescription) <?> [BrandUpdated brandDescription]
-            | Delete id -> (Validate.canDelete state) <?> [CatalogBrandDeleted id]
+            | Create item -> (Validate.canCreate state item) <?> (Validate.canUpdateBrand state item) <?> [CatalogBrandCreated item :> IEvent]
+            | UpdateBrand brandDescription -> (Validate.canUpdateBrandDescription state brandDescription) <?> [BrandUpdated brandDescription :> IEvent]
+            | Delete id -> (Validate.canDelete state) <?> [CatalogBrandDeleted id :> IEvent]
 
 let makeCatalogBrandCommandHandler =
     makeCommandHandler { Zero = Handlers.State.Zero
-                         ApplyEvent = Handlers.applyEvent
-                         ExecuteCommand = Handlers.executeCommand }
+                         ApplyEvent = fun s e -> Handlers.applyEvent s (e :?> Event)
+                         ExecuteCommand = fun s (c:ICommand) ->  Handlers.executeCommand s (c :?> Command) }
 

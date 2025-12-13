@@ -1,22 +1,25 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+USER app
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 8080
+EXPOSE 8081
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["webhooks/webhooks-service/webhooks-service.fsproj", "webhooks/webhooks-service/"]
-RUN dotnet restore "webhooks/webhooks-service/webhooks-service.fsproj"
+COPY ["webhooks/api/webhooks-service-api.fsproj", "webhooks/api/"]
+RUN dotnet restore "./webhooks/api/webhooks-service-api.fsproj"
 COPY . .
-WORKDIR "/src/webhooks/webhooks-service"
-RUN dotnet build "webhooks-service.fsproj" -c Release -o /app/build
+WORKDIR "/src/webhooks/api"
+RUN dotnet build "./webhooks-service-api.fsproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "webhooks-service.fsproj" -c Release -o /app/publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "./webhooks-service-api.fsproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "webhooks-service.dll"]
+ENTRYPOINT ["dotnet", "webhooks-service-api.dll"]

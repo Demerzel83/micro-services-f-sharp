@@ -3,27 +3,25 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
 open FSharp.Control.Tasks.V2
 open Giraffe
 open System
-open Chessie.ErrorHandling
 open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogTypeModel
 open Microsoft.AspNetCore.Authentication.JwtBearer
 
 open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogTypeAggregate
 open Microsoft.eShopOnContainers.Services.Catalog.Core.Commands
 open Microsoft.eShopOnContainers.Services.Catalog.Core.Types
-//open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer.CatalogTypeReadModel
-//open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer.Commands
-open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.MongoDb.CatalogTypeReadModel
-open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.MongoDb.Commands
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer.CatalogTypeReadModel
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer.Commands
+open AsyncResult
 
 module CatalogTypesController =
-    let authorize =
-        requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
+    //let authorize =
+    //    requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
 
     let getHandlers () =
         choose [
           GET >=> choose [
-            route "/types" >=> authorize  >=>
-              authorize >=> fun next context ->
+            route "/types" >=>
+              fun next context ->
                 task {
                       let result = Reader.getCatalogTypes() 
 
@@ -31,7 +29,7 @@ module CatalogTypesController =
                   }
             
             routef "/types/%s" (fun id ->
-              authorize >=> fun next context ->
+              fun next context ->
                   task {
                       let result = ["item1"]
 
@@ -39,7 +37,7 @@ module CatalogTypesController =
                   }
             )
             routef "/types/%s" (fun name ->
-              authorize >=> fun next context ->
+              fun next context ->
                   task {
                       let result = [name]
 
@@ -49,7 +47,7 @@ module CatalogTypesController =
           ]
           PUT >=> 
             routef "/types/%s" (fun id ->
-                authorize >=> fun next context ->
+                fun next context ->
                     task {
                         let! catalogType = context.BindModelAsync<Model.CatalogTypeModel>()
                         let id = AggregateId (new Guid (id))
@@ -63,10 +61,10 @@ module CatalogTypesController =
                         return! 
                             (match result with
                             | Result.Ok _ -> Successful.OK catalogType
-                            | Result.Bad _ ->  RequestErrors.badRequest (text "error")) next context
+                            | Result.Error _ ->  RequestErrors.badRequest (text "error")) next context
                         })
           DELETE >=> routef "/types/%s" (fun ids ->
-            authorize >=> fun next context ->
+            fun next context ->
                 task {
                     let id = AggregateId (new Guid(ids))
                     let versionNumber = AggregateVersion.Irrelevant;
@@ -81,9 +79,9 @@ module CatalogTypesController =
                     return! 
                         (match result with
                         | Result.Ok _ -> Successful.OK id
-                        | Result.Bad _ ->  RequestErrors.badRequest (text "error")) next context
+                        | Result.Error _ ->  RequestErrors.badRequest (text "error")) next context
                 })
-          POST >=> route "/types/new" >=> authorize  >=>
+          POST >=> route "/types/new" >=>
                 fun next context ->
                     task {
                         let! catalogItemM = context.BindModelAsync<Model.CatalogTypeModel>()
@@ -102,7 +100,7 @@ module CatalogTypesController =
                         return! 
                             (match result with
                             | Result.Ok _ -> Successful.OK { Id = newId; Type = catalogItemM.Type }
-                            | Result.Bad _ ->  RequestErrors.badRequest (text "error")) next context
+                            | Result.Error _ ->  RequestErrors.badRequest (text "error")) next context
                     }
 
         ]

@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>catalog_service_core</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Catalog.fs">
+      <Visible>False</Visible>
+    </Compile>
+    <Compile Include="CatalogDB.fs">
+      <Visible>False</Visible>
+    </Compile>
+    <Compile Include="Events">
+      <Visible>False</Visible>
+    </Compile>
+    <Compile Include="EventsDB.fs">
+      <Visible>False</Visible>
+    </Compile>
+    <Compile Include="Types.fs" />
+    <Compile Include="Events.fs" />
+    <Compile Include="Commands.fs" />
+    <Compile Include="CatalogBrandAggregate.fs" />
+    <Compile Include="CatalogBrandModel.fs" />
+    <Compile Include="CatalogTypeAggregate.fs" />
+    <Compile Include="CatalogTypeModel.fs" />
+    <Compile Include="CatalogItemAggregate.fs" />
+    <Compile Include="CatalogItemModel.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Chessie" Version="0.6.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="8.0.200" />
+  </ItemGroup>
+</Project>

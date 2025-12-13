@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "catalog-type-listener": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

@@ -1,0 +1,106 @@
+services:
+    sqlserver:
+        container_name: sqlInDocker
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        environment:
+          - MSSQL_SA_PASSWORD=MyVeryStrongPassword123!
+          - ACCEPT_EULA=Y
+        volumes:
+          - sql_data:/home/node/app/db/sqlserver
+        ports:
+          - "1433:1433"
+    # mongo:
+    #     image: mongo
+    #     volumes:
+    #       - mongo_data:/home/node/app/db/mongo
+    #     ports:
+    #       - "27017:27017"
+    # rabbitmq:
+    #     container_name: rabbitInDocker
+    #     image: rabbitmq:3-management
+    #     environment:
+    #       - RABBITMQ_DEFAULT_USER=guest
+    #       - RABBITMQ_DEFAULT_PASS=guest
+    #     volumes:
+    #       - rabbitmq_data:/home/node/app/bus/rabbitmq
+    #     ports:
+    #       - "5672:5672"
+    #       - "15672:15672" 
+
+    # identity-api:
+    #     build: 
+    #         context: ./identity-service/api
+    #         dockerfile: ./Dockerfile
+    #     ports:
+    #         - "5004:80"
+    #         - "5005:80"
+ 
+
+
+    # basket-service:
+        # build: ./basket-service
+        # ports:
+            # - "5000:80"
+            # - "5001:80"
+   #apigateways:
+    # basket-db:
+        # image: mcr.microsoft.com/mssql/server:2019-latest
+        # ports:
+            # - "1434:1433"
+        # environment:
+            # SA_PASSWORD: "Welcome1234.?"
+            # ACCEPT_EULA: "Y"
+    # basket-api:
+    # basket-listener:
+    
+    # catalog-db:
+    catalog-api:
+        build:
+            context: ./catalog-service
+            dockerfile: ./Dockerfile
+            
+        ports:
+            - "5002:80"
+            - "5003:80"
+        depends_on:
+            - sqlserver
+    #         - identity-api
+    # catalog-brand-listener:
+    # catalog-listener:
+    # catalog-type-listener:
+            
+    # identity-db:
+
+    
+    # location-db:
+    # location-listener:
+    # location-api:
+        # build: ./location-service
+        # ports:
+            # - "5006:80"
+            # - "5007:80"
+    
+    # marketing-db:
+    # marketing-listener:
+    # marketing-api:
+        # build: ./marketing-service
+        # ports:
+            # - "5008:80"
+            # - "5009:80"
+    
+    # ordering-db:
+        # build: ./ordering-service
+        # ports:
+            # - "5010:80"
+            # - "5011:80"
+    # ordering-api:
+    # ordering-listener:
+    
+    # ordering-api:
+    
+    # webhooks-api:
+    
+volumes:
+    sql_data:
+    mongo_data:
+    rabbitmq_data:

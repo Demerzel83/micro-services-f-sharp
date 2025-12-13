@@ -75,7 +75,7 @@ ALTER DATABASE [Events] SET QUERY_STORE = OFF
 GO
 USE [Events]
 GO
-/****** Object:  Table [dbo].[Command]    Script Date: 27/08/2022 09:45:27 ******/
+/****** Object:  Table [dbo].[Command]    Script Date: 23/03/2025 12:00:36 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -92,13 +92,12 @@ CREATE TABLE [dbo].[Command](
 	[QueueName] [nvarchar](1024) NOT NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Event]    Script Date: 27/08/2022 09:45:27 ******/
+/****** Object:  Table [dbo].[Event]    Script Date: 23/03/2025 12:00:36 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Event](
-	[Id] [int] NOT NULL,
 	[EventId] [uniqueidentifier] NOT NULL,
 	[AggregateId] [uniqueidentifier] NOT NULL,
 	[CausationId] [uniqueidentifier] NOT NULL,
@@ -107,13 +106,7 @@ CREATE TABLE [dbo].[Event](
 	[EventPayload] [nvarchar](max) NOT NULL,
 	[PayloadType] [nvarchar](1024) NOT NULL,
 	[Category] [nvarchar](1024) NOT NULL,
- CONSTRAINT [PK_Event] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	[Id] [int] IDENTITY(1,1) NOT NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-USE [master]
-GO
-ALTER DATABASE [Events] SET  READ_WRITE 
-GO
+

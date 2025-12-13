@@ -53,10 +53,10 @@ let getProfile userName =
             |> Observable.map reposResponseToPopularRespos
             |> flatmap2 toRepoWithLanguagesStream
         
-        async {
+        task {
             return! popularReposStream
                     |> Observable.zip userStream
                     |> Observable.map toProfile
                     |> TaskObservableExtensions.ToTask
-                    |> Async.AwaitTask
+                     
         }

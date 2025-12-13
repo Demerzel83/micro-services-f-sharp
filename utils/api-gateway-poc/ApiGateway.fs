@@ -17,7 +17,7 @@ let JSON v =
     
 let getProfile userName (httpContext : Suave.Http.HttpContext) =
        async {
-          let! profile = getProfile userName
+          let! profile = (getProfile userName ) |> Async.AwaitTask
           match profile with
           | Some p -> return! JSON p httpContext
           | None -> return! Suave.RequestErrors.NOT_FOUND (sprintf "Username %s not found" userName) httpContext

@@ -1,8 +1,8 @@
 ﻿module Microsoft.eShopOnContainers.Services.Catalog.Core.Types
 
     open System
-    open Chessie.ErrorHandling
-
+    open TaskResult
+    
     type AggregateId = AggregateId of Guid
     type EventId = EventId of Guid
     type CommandId = CommandId of Guid
@@ -56,4 +56,4 @@
     type ProcessManager<'TState> =
         { Zero : 'TState
           ApplyEvent : 'TState -> EventEnvelope<IEvent>-> 'TState
-          ProcessEvent: 'TState -> EventEnvelope<IEvent> -> Result<(QueueName * CommandEnvelope<ICommand>) list, IError> }
+          ProcessEvent: 'TState -> EventEnvelope<IEvent> -> TaskResult<(QueueName * CommandEnvelope<ICommand>) list, IError> }

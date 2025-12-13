@@ -50,17 +50,17 @@ module Program =
         (match env.EnvironmentName with
         | "Development"  -> app.UseDeveloperExceptionPage()
         | _ -> app.UseGiraffeErrorHandler errorHandler)
-            .UseAuthentication()
-            .UseHttpsRedirection()
+            // .UseAuthentication()
+            // .UseHttpsRedirection()
             .UseCors(configureCors)
             .UseStaticFiles()
             .UseGiraffe(webApp)
     
-    let secret = "spadR2dre#u-ruBrE@TepA&*Uf@U"
+    //let secret = "spadR2dre#u-ruBrE@TepA&*Uf@UspadR2dre#u-ruBrE@TepA&*Uf@U"
     let configureServices (services : IServiceCollection) =
         services.AddCors()    |> ignore
         services.AddGiraffe() |> ignore
-        services
+        (*services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(fun options -> 
                 options.TokenValidationParameters <- TokenValidationParameters(
@@ -71,7 +71,7 @@ module Program =
                     ValidIssuer = "jwtwebapp.net",
                     ValidAudience = "jwtwebapp.net",
                     IssuerSigningKey = SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)))
-                ) |> ignore
+                ) |> ignore*)
 
 
     let configureLogging (builder : ILoggingBuilder) =

@@ -1,98 +1,57 @@
-version: "3.8"
-volumes:
-  eshop:
-    external: true
 services:
-    sqlserver:
-        container_name: sqlInDocker
-        image: mcr.microsoft.com/mssql/server:2019-latest
-        environment:
-          - MSSQL_SA_PASSWORD=Welcome1$$
+  sqlserver:
+      container_name: sqlInDocker
+      image: mcr.microsoft.com/mssql/server:2022-latest
+      environment:
+          - MSSQL_SA_PASSWORD=MyVeryStrongPassword123!
           - ACCEPT_EULA=Y
-        volumes:
-          - eshop:/home/node/app/db/sqlserver
-        ports:
+      volumes:
+          - sql_data:/home/node/app/db/sqlserver
+      ports:
           - "1433:1433"
-  # rabbitmq:
-    # container_name: rabbitInDocker
-    # image: rabbitmq:3-management
-    # environment:
-      # - RABBITMQ_DEFAULT_USER=guest
-      # - RABBITMQ_DEFAULT_PASS=guest
-    # volumes:
-      # - eshop:/home/node/app/bus/rabbitmq
-    # ports:
-      # - "5672:5672"
-    mongo:
-        image: mongo
-        volumes:
-          - eshop:/home/node/app/db/mongo
-        ports:
-          - "27017:27017"
-    # basket-service:
-        # build: ./basket-service
-        # ports:
-            # - "5000:80"
-            # - "5001:80"
-   #apigateways:
-    # basket-db:
-        # image: mcr.microsoft.com/mssql/server:2019-latest
-        # ports:
-            # - "1434:1433"
-        # environment:
-            # SA_PASSWORD: "Welcome1234.?"
-            # ACCEPT_EULA: "Y"
-    # basket-api:
-    # basket-listener:
+      networks:
+        - app-network
+  rabbitmq:
+      container_name: rabbitInDocker
+      image: rabbitmq:3-management
+      environment:
+        - RABBITMQ_DEFAULT_USER=guest
+        - RABBITMQ_DEFAULT_PASS=guest
+      volumes:
+        - rabbitmq_data:/home/node/app/bus/rabbitmq
+      ports:
+        - "5672:5672"
+        - "15672:15672" 
+      networks:
+        - app-network
+
+  catalog-listener:
+    depends_on: 
+      - sqlserver
+    image: ${DOCKER_REGISTRY-}cataloglistener
+    build:
+      context: .
+      dockerfile: catalog-service/catalog-listener/Dockerfile
+    networks:
+      - app-network
+  catalog-service-api:
+    depends_on: 
+      - sqlserver
+    image: ${DOCKER_REGISTRY-}catalogserviceapi
+    build:
+      context: .
+      dockerfile: catalog-service/api-v2/catalog-service-api/Dockerfile
+    ports:
+        - "5002:80"
+        - "5003:80"
+    networks:
+      - app-network
+
+volumes:
+    sql_data:
+    mongo_data:
+    rabbitmq_data:
     
-    # catalog-db:
-    catalog-api:
-        build:
-            context: ./catalog-service
-            dockerfile: ./dockerfile-api
-            
-        ports:
-            - "5002:80"
-            - "5003:80"
-        depends_on:
-            - sqlserver
-            - identity-listener
-    # catalog-brand-listener:
-    # catalog-listener:
-    # catalog-type-listener:
-            
-    # identity-db:
-    # identity-api:
-    identity-listener:
-        build: ./identity-service/api
-        ports:
-            - "5004:80"
-            - "5005:80"
-    
-    # location-db:
-    # location-listener:
-    # location-api:
-        # build: ./location-service
-        # ports:
-            # - "5006:80"
-            # - "5007:80"
-    
-    # marketing-db:
-    # marketing-listener:
-    # marketing-api:
-        # build: ./marketing-service
-        # ports:
-            # - "5008:80"
-            # - "5009:80"
-    
-    # ordering-db:
-        # build: ./ordering-service
-        # ports:
-            # - "5010:80"
-            # - "5011:80"
-    # ordering-api:
-    # ordering-listener:
-    
-    # ordering-api:
-    
-    # webhooks-api:
+networks:
+  app-network:
+    driver: bridge

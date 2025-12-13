@@ -3,17 +3,16 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
 open FSharp.Control.Tasks.V2
 open Giraffe
 open System
-open Chessie.ErrorHandling
 open Microsoft.AspNetCore.Authentication.JwtBearer
 
 open Microsoft.eShopOnContainers.Services.Catalog.Core.ReadModel
 open Microsoft.eShopOnContainers.Services.Catalog.Core.CatalogItemAggregate
 open Microsoft.eShopOnContainers.Services.Catalog.Core.Commands
 open Microsoft.eShopOnContainers.Services.Catalog.Core.Types
-//open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer.Commands
-//open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer.ReadModel
-open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.MongoDb.Commands
-open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.MongoDb.ReadModel
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer.Commands
+open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.SqlServer.ReadModel
+//open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.MongoDb.Commands
+//open Microsoft.eShopOnContainers.Services.Catalog.Infrastructure.MongoDb.ReadModel
 
 module CatalogItemsController =
     let processRequest (id:string) (cmd:Command) (versionNumber:AggregateVersion) (model:'T) next context =
@@ -27,7 +26,7 @@ module CatalogItemsController =
             return! 
                 (match result with
                 | Result.Ok _ -> Successful.OK model
-                | Result.Bad _ ->  RequestErrors.badRequest (text "error")) next context
+                | Result.Error _ ->  RequestErrors.badRequest (text "error")) next context
         }
     let processReadRequest result next context =
         task {
@@ -36,55 +35,56 @@ module CatalogItemsController =
               | None -> RequestErrors.NOT_FOUND (text "Contact Type not found") next context
               | Some xs -> Successful.OK xs next context
         }
-    let authorize =
-        requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
+    //let authorize =
+    //    requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
 
     let getHandlers () =
         choose [
           GET >=> choose [
-            route "/items" >=> authorize >=>
+            route "/items" >=>
               fun next context ->
                 task {
-                      let! result = Reader.getCatalogItems() 
+                      let! result = Reader.getCatalogs() 
 
                       return! json result next context
                   }
             
             routef "/items/%s" (fun id ->
-                authorize >=> fun next context ->
+                fun next context ->
                           task {
-                              let! result = Reader.getCatalogItemById (Guid.Parse id) 
+                              let! result = Reader.getCatalogById (Guid.Parse id) 
                               return! processReadRequest result next context
                           }
             )
             routef "/items/withdescription/%s" (fun description ->
-              authorize >=> fun next context ->
+              fun next context ->
                   task {
-                      let! result = Reader.getCatalogItemsByDescription description
-
-                      return! processReadRequest result next context
-                  }
-            )
-            routef "/items/type/%s/brand/%s" (fun (catalogTypeId, catalogBrandId) ->
-              authorize >=> fun next context ->
-                  task {
-                      let! result = Reader.getCatalogItemsByTypeAndBrand (Guid.Parse catalogTypeId) (Guid.Parse catalogBrandId) 
+                      let! result = Reader.getCatalogsByDescription description
 
                       return! processReadRequest result next context
                   }
             )
             routef "/items/type/all/brand/%s" (fun catalogBrandId ->
-              authorize >=> fun next context ->
+              fun next context ->
                   task {
-                      let! result = Reader.getCatalogItemsByBrand (Guid.Parse catalogBrandId) 
+                      let! result = Reader.getCatalogsByBrand (Guid.Parse catalogBrandId) 
 
                       return! processReadRequest result next context
                   }
             )
+            routef "/items/type/%s/brand/%s" (fun (catalogTypeId, catalogBrandId) ->
+              fun next context ->
+                  task {
+                      let! result = Reader.getCatalogsByTypeAndBrand (Guid.Parse catalogTypeId) (Guid.Parse catalogBrandId) 
+
+                      return! processReadRequest result next context
+                  }
+            )
+
             routef "/items/brand/all/type/%s" (fun typeId -> 
-                authorize >=> fun next context ->
+                fun next context ->
                     task {
-                        let! result = Reader.getCatalogItemsByType (Guid.Parse typeId) 
+                        let! result = Reader.getCatalogsByType (Guid.Parse typeId) 
                         
                         return! processReadRequest result next context
                     }
@@ -92,42 +92,42 @@ module CatalogItemsController =
           ]
           PUT >=> 
             routef "/item/price/%s" (fun id ->
-                authorize >=> fun next context ->
+                fun next context ->
                     task {
                         let! catalogItemPrice = context.BindModelAsync<Model.CatalogItemPrice>()
                         let cmd = SetPrice catalogItemPrice.Price
                         return! processRequest id cmd AggregateVersion.Irrelevant catalogItemPrice next context 
                         })
             routef "/item/picture/%s" (fun id ->
-                authorize >=> fun next context ->
+                fun next context ->
                     task {
                         let! catalogItemImage = context.BindModelAsync<Model.CatalogItemImage>()
                         let cmd = SetPicture (catalogItemImage.FileName, catalogItemImage.Uri)
                         return! processRequest id cmd AggregateVersion.Irrelevant catalogItemImage next context 
                         })
             routef "/item/stock/%s" (fun id -> 
-                authorize >=> fun next context ->
+                fun next context ->
                     task {
                         let! catalogItemStock = context.BindModelAsync<Model.CatalogItemStock>()
                         let cmd = SetStock catalogItemStock.Stock
                         return! processRequest id cmd AggregateVersion.Irrelevant catalogItemStock next context
                         })
             routef "/item/stockthreshold/%s" (fun id ->
-                authorize >=> fun next context ->
+                fun next context ->
                     task {
                         let! catalogItemStockThreshold = context.BindModelAsync<Model.CatalogItemStockThreshold>()
                         let cmd = UpdateStockThreshold (catalogItemStockThreshold.ReStock, catalogItemStockThreshold.MaxStock)
                         return! processRequest id cmd AggregateVersion.Irrelevant catalogItemStockThreshold next context
                         })
             routef "/item/reorder/%s" (fun id -> 
-                authorize >=> fun next context ->
+                fun next context ->
                     task {
                         let! catalogItemReorder = context.BindModelAsync<Model.CatalogItemReorder>()
                         let cmd = if catalogItemReorder.Reorder = true then OnReorder else NotOnReorder
                         return! processRequest id cmd AggregateVersion.Irrelevant catalogItemReorder next context 
                     })
           DELETE >=> routef "/item/%s" (fun ids ->
-            authorize >=> fun next context ->
+            fun next context ->
                 task {
                     let id = AggregateId (new Guid(ids))
                     let cmd =   
@@ -137,7 +137,7 @@ module CatalogItemsController =
                     return! processRequest ids cmd AggregateVersion.Irrelevant id next context 
                     
                 })
-          POST >=> route "/item/new" >=> authorize  >=>
+          POST >=> route "/item/new" >=>
                 fun next context ->
                     task {
                         
